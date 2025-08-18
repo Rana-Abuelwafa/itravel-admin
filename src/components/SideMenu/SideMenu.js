@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { FaCar, FaCity, FaChartSimple, FaShip } from "react-icons/fa6";
 import {
   FiHome,
   FiHelpCircle,
@@ -38,12 +39,22 @@ export default function SideMenu() {
       <ul>
         <li>
           <Link to="/dashboard">
-            🏠 <span className="menu-label">Dashboard</span>
+            <FaChartSimple /> <span className="menu-label">Dashboard</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/destinations">
+            <FaCity /> <span className="menu-label">Destinations</span>
           </Link>
         </li>
         <li>
           <Link to="/trips">
-            👤 <span className="menu-label">Trips</span>
+            <FaShip /> <span className="menu-label">Trips</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/transfer">
+            <FaCar /> <span className="menu-label">Transfer</span>
           </Link>
         </li>
       </ul>

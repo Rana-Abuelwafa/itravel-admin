@@ -1,0 +1,17 @@
+import { configureStore } from "@reduxjs/toolkit";
+import destinationReducer from "../slices/destinationSlice";
+import authReducer from "../slices/AuthSlice";
+import tripReducer from "../slices/tripSlice";
+export const store = configureStore({
+  reducer: {
+    destinations: destinationReducer,
+    auth: authReducer,
+    trips: tripReducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+});
+
+export default store;

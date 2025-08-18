@@ -1,0 +1,483 @@
+import { useDispatch, useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import {
+  GetDestinations,
+  SaveMainDestination,
+} from "../../slices/destinationSlice";
+import { Form, Row, Col, Button } from "react-bootstrap";
+import { Countries } from "../../helper/Countries";
+import {
+  FaPlus,
+  FaTrash,
+  FaChevronUp,
+  FaEdit,
+  FaGlobe,
+  FaChevronDown,
+  FaImage,
+} from "react-icons/fa";
+import PopUp from "../Shared/popup/PopUp";
+import LoadingPage from "../Loader/LoadingPage";
+import { Accordion, Table } from "react-bootstrap";
+import TranslationModal from "./TranslationModal";
+import ImagesModal from "./ImagesModal";
+function DestinationComp() {
+  const dispatch = useDispatch();
+  const { destinations, loading, error } = useSelector(
+    (state) => state.destinations
+  );
+  const [showTranslationModal, setShowTranslationModal] = useState(false);
+  const [currentMainDest, setCurrentMainDest] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [currentTranslation, setCurrentTranslation] = useState(null); // State for current translation being edited
+  const [expandedRows, setExpandedRows] = useState([]); // State for expanded rows (translations)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for delete confirmation popup
+  const [packageToDelete, setPackageToDelete] = useState(null); // State for package to be deleted
+  const [showTranslationDeleteConfirm, setShowTranslationDeleteConfirm] =
+    useState(false); // State for translation delete confirmation popup
+  const [translationToDelete, setTranslationToDelete] = useState(null); // State for translation to be deleted
+  const [showPopup, setShowPopup] = useState(false); // State for popup visibility
+  const [popupMessage, setPopupMessage] = useState(""); // State for popup message
+  const [popupType, setPopupType] = useState("alert"); // State for popup type
+  const [formData, setFormData] = useState({
+    id: 0,
+    dest_default_name: "",
+    dest_code: "",
+    active: true,
+    country_code: "",
+    route: "",
+  }); // Form state for save Destinations
+  // Handle input changes
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  // Fetch services and packages on component mount
+  useEffect(() => {
+    let data = { country_code: "", lang_code: "en", currency_code: "" };
+    dispatch(GetDestinations(data));
+  }, []);
+  const onSubmit = (e) => {
+    e.preventDefault();
+    dispatch(SaveMainDestination(formData)).then((result) => {
+      if (result.payload && result.payload.success) {
+        setShowPopup(false);
+        setFormData({
+          id: 0,
+          dest_default_name: "",
+          dest_code: "",
+          active: true,
+          country_code: "",
+          route: "",
+        });
+        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        dispatch(GetDestinations(data));
+      } else {
+        setShowPopup(true);
+        setPopupMessage(result.payload.errors);
+      }
+    });
+  };
+
+  // Handle editing a package
+  const handleEdit = async (pkg) => {
+    // try {
+    //   dispatch(setCurrentPackage(pkg));
+    //   dispatch(fetchPackages());
+    // } catch (error) {
+    //   const errorMessage =
+    //     typeof error === "string"
+    //       ? error
+    //       : error.message || "Failed to edit package";
+    //   setPopupMessage(errorMessage);
+    //   setPopupType("error");
+    //   setShowPopup(true);
+    // }
+  };
+
+  // Handle deleting a package
+  const handleDeleteClick = (pkg) => {
+    setPackageToDelete(pkg);
+    setShowDeleteConfirm(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    // setShowDeleteConfirm(false);
+    // try {
+    //   const result = await dispatch(
+    //     savePackage({ ...packageToDelete, active: false })
+    //   ).unwrap();
+    //   dispatch(fetchPackages());
+    //   setPopupMessage("Package deleted successfully");
+    //   setPopupType("success");
+    //   setShowPopup(true);
+    // } catch (error) {
+    //   const errorMessage =
+    //     typeof error === "string"
+    //       ? error
+    //       : error.message || "Failed to delete package";
+    //   setPopupMessage(errorMessage);
+    //   setPopupType("error");
+    //   setShowPopup(true);
+    // }
+    // setPackageToDelete(null);
+  };
+
+  // Handle adding a translation
+  const handleAddTranslation = (dest) => {
+    setCurrentMainDest(dest);
+    setCurrentTranslation({
+      id: 0,
+      destination_id: dest.destination_id,
+      lang_code: "en",
+      dest_name: "",
+      dest_description: "",
+      active: true,
+    });
+    setShowTranslationModal(true);
+  };
+
+  // Handle deleting a translation
+  const handleDeleteTranslationClick = (translation) => {
+    // setTranslationToDelete(translation);
+    // setShowTranslationDeleteConfirm(true);
+  };
+
+  const handleDeleteTranslationConfirm = async () => {
+    // setShowTranslationDeleteConfirm(false);
+    // try {
+    //   const result = await dispatch(
+    //     savePackageTranslation({ ...translationToDelete, delete: true })
+    //   ).unwrap();
+    //   dispatch(fetchPackages());
+    //   setPopupMessage("Translation deleted successfully");
+    //   setPopupType("success");
+    //   setShowPopup(true);
+    // } catch (error) {
+    //   const errorMessage =
+    //     typeof error === "string"
+    //       ? error
+    //       : error.message || "Failed to delete Translation";
+    //   setPopupMessage(errorMessage);
+    //   setPopupType("error");
+    //   setShowPopup(true);
+    // }
+    // setTranslationToDelete(null);
+  };
+  const toggleRow = (id) => {
+    const currentExpandedRows = [...expandedRows];
+    const isRowExpanded = currentExpandedRows.includes(id);
+    setExpandedRows(
+      isRowExpanded
+        ? currentExpandedRows.filter((rowId) => rowId !== id)
+        : [...currentExpandedRows, id]
+    );
+  };
+
+  // Render translation header row
+  const renderTranslationHeader = () => {
+    return (
+      <tr className="translation-header">
+        {/* <th>Language</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Actions</th> */}
+        <td colSpan="5">
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex" style={{ width: "85%" }}>
+              <div style={{ width: "15%" }}>
+                <strong>Language</strong>
+              </div>
+              <div style={{ width: "25%" }}>
+                <strong>Name</strong>
+              </div>
+              <div style={{ width: "25%" }}>
+                <strong>Description</strong>
+              </div>
+            </div>
+            <div>
+              <strong>Actions</strong>
+            </div>
+          </div>
+        </td>
+      </tr>
+    );
+  };
+
+  // Render translation row
+  const renderTranslationRow = (translation) => {
+    return (
+      <tr key={`translation-${translation.id}`} className="translation-row">
+        {/* <td>{translation.lang_code}</td>
+        <td>{translation.dest_name}</td>
+        <td>{translation.dest_description}</td>
+        <td>
+          {" "}
+          <button
+            className="btn btn-sm btn-warning me-2 yellow-btn"
+            onClick={() => {
+              setCurrentTranslation(translation);
+              setShowTranslationModal(true);
+            }}
+            title="Edit Translation"
+          >
+            <FaEdit size={12} />
+          </button>
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={() => handleDeleteTranslationClick(translation)}
+            title="Delete Translation"
+          >
+            <FaTrash size={12} />
+          </button>
+        </td> */}
+        {translation.lang_code != null ? (
+          <td colSpan="5">
+            <div className="d-flex justify-content-between align-items-center">
+              <div style={{ width: "85%", display: "flex" }}>
+                <div style={{ width: "15%" }}>{translation.lang_code}</div>
+                <div style={{ width: "25%" }}>{translation.dest_name}</div>
+                <div style={{ width: "25%" }}>
+                  {translation.dest_description}
+                </div>
+              </div>
+              <div>
+                <button
+                  className="btn btn-sm btn-warning me-2 yellow-btn"
+                  onClick={() => {
+                    setCurrentTranslation(translation);
+                    setShowTranslationModal(true);
+                  }}
+                  title="Edit Translation"
+                >
+                  <FaEdit size={12} />
+                </button>
+                <button
+                  className="btn btn-sm btn-danger"
+                  onClick={() => handleDeleteTranslationClick(translation)}
+                  title="Delete Translation"
+                >
+                  <FaTrash size={12} />
+                </button>
+              </div>
+            </div>
+          </td>
+        ) : (
+          <td colSpan="5">
+            <div>No Data</div>
+          </td>
+        )}
+      </tr>
+    );
+  };
+
+  // Handle adding a iamge
+  const handleAddImage = (dest) => {
+    setCurrentMainDest(dest);
+    setShowImageModal(true);
+  };
+  return (
+    <section className="layout_section">
+      <div className="d-flex justify-content-between align-items-center header_title">
+        <h2 className="mb-4 page-title">Destination Setting</h2>
+      </div>
+      <div className="dest_form">
+        <Form onSubmit={onSubmit} className="mb-4">
+          <Row>
+            <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Form.Group className="mb-3">
+                <Form.Label>Code</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Code"
+                  name="dest_code"
+                  onChange={handleInputChange}
+                  required
+                  className="formInput"
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Form.Group className="mb-3">
+                <Form.Label>Default Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="default name"
+                  name="dest_default_name"
+                  onChange={handleInputChange}
+                  required
+                  className="formInput"
+                />
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Form.Group controlId="service">
+                <Form.Label>Country</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="country_code"
+                  onChange={handleInputChange}
+                  value={formData.country_code}
+                  required
+                  className="formInput"
+                >
+                  <option value="">select Country Code</option>
+                  {Countries &&
+                    Countries?.map((country, index) => (
+                      <option key={index} value={country.code}>
+                        {country.code} - {country.code}
+                      </option>
+                    ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Form.Group className="mb-3">
+                <Form.Label>Route</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="route"
+                  name="route"
+                  onChange={handleInputChange}
+                  required
+                  className="formInput"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs={12} md={{ span: 3, offset: 9 }}>
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
+              >
+                <FaPlus className="me-1" /> Add
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </div>
+      <div className="result_list">
+        {" "}
+        <Table responsive>
+          <thead>
+            <tr className="main_row">
+              <th>Code</th>
+              <th>Name</th>
+              <th>Country</th>
+              <th>Route</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {destinations &&
+              destinations.map((dest, index) => (
+                <React.Fragment key={dest.destination_id}>
+                  <tr
+                    className={
+                      !dest.active
+                        ? "main_row_data inactive-row"
+                        : "main_row_data"
+                    }
+                  >
+                    <td>
+                      {dest.translations?.length > 0 && (
+                        <button
+                          className="expand-button me-3"
+                          onClick={() => toggleRow(dest.destination_id)}
+                        >
+                          {expandedRows.includes(dest.destination_id) ? (
+                            <FaChevronUp />
+                          ) : (
+                            <FaChevronDown />
+                          )}
+                        </button>
+                      )}
+                      {dest.dest_code}
+                    </td>
+                    <td>{dest.dest_default_name}</td>
+                    <td>{dest.country_code}</td>
+                    <td>{dest.route}</td>
+                    <td>
+                      <div className="d-flex">
+                        <button
+                          className="btn btn-sm btn-info me-2 green-btn"
+                          onClick={() => handleAddTranslation(dest)}
+                          title="Add Translation"
+                        >
+                          <FaGlobe />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-warning me-2 yellow-btn"
+                          onClick={() => handleEdit(dest)}
+                          title="Edit"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDeleteClick(dest)}
+                          title="Delete"
+                          disabled={!dest.active}
+                        >
+                          <FaTrash />
+                        </button>
+                        <button
+                          className="btn btn-sm  ms-2 purble-btn"
+                          onClick={() => handleAddImage(dest)}
+                          title="Add Image"
+                        >
+                          <FaImage />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  {expandedRows.includes(dest.destination_id) &&
+                    dest.translations?.length > 0 && (
+                      <>
+                        {renderTranslationHeader()}
+                        {dest.translations?.map((translation) =>
+                          renderTranslationRow(translation)
+                        )}
+                      </>
+                    )}
+                </React.Fragment>
+              ))}
+          </tbody>
+        </Table>
+      </div>
+      {loading ? <LoadingPage /> : null}
+      <PopUp
+        show={showPopup}
+        closeAlert={() => setShowPopup(false)}
+        msg={popupMessage}
+        type={popupType}
+        autoClose={3000}
+      />
+      {/* Translation Modal */}
+      <TranslationModal
+        show={showTranslationModal}
+        setShow={setShowTranslationModal}
+        currentTranslation={currentTranslation}
+        setCurrentTranslation={setCurrentTranslation}
+        setPopupMessage={setPopupMessage}
+        setPopupType={setPopupType}
+        setShowPopup={setShowPopup}
+      />
+      {showImageModal ? (
+        <ImagesModal
+          show={showImageModal}
+          setShow={setShowImageModal}
+          destination={currentMainDest}
+          setPopupMessage={setPopupMessage}
+          setPopupType={setPopupType}
+          setShowPopup={setShowPopup}
+        />
+      ) : null}
+    </section>
+  );
+}
+
+export default DestinationComp;

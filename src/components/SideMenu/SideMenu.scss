@@ -1,7 +1,4 @@
-// src/components/SideMenu.scss
-$primary-color: #1d1f4d;
-$hover-color: #34495e;
-$text-color: #ecf0f1;
+@import "../../styles//variables";
 
 .side-menu {
   width: 220px;
@@ -53,7 +50,7 @@ $text-color: #ecf0f1;
 
         &:hover {
           //background-color: $primary-color;
-          color: $primary-color;
+          color: $secondary-color;
         }
 
         svg {
@@ -75,7 +72,7 @@ $text-color: #ecf0f1;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 
     &:hover {
-      background-color: $hover-color;
+      background-color: $secondary-color;
     }
   }
   .side-menu-topbar {
@@ -102,7 +99,7 @@ $text-color: #ecf0f1;
       align-items: center;
 
       &:hover {
-        color: $primary-color;
+        color: $secondary-color;
       }
     }
   }
@@ -126,19 +123,25 @@ $text-color: #ecf0f1;
 
       .user-icon {
         font-size: 20px;
-        color: #542d72;
+        color: $primary-color;
         margin-right: 10px;
         flex-shrink: 0;
+        &:hover {
+          color: $secondary-color;
+        }
       }
 
       .user-title {
         font-size: 14px;
-        color: #542d72;
+        color: $primary-color;
         text-align: left;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+        &:hover {
+          color: $secondary-color;
+        }
       }
     }
 
@@ -162,10 +165,10 @@ $text-color: #ecf0f1;
         width: 100%;
 
         &:hover {
-          color: #b181d6;
+          color: $secondary-color;
 
           .action-icon {
-            color: #b181d6;
+            color: $secondary-color;
           }
         }
 

@@ -1,0 +1,17 @@
+.result_list {
+  .x_icon {
+    color: red;
+  }
+  .check_icon {
+    color: green;
+  }
+}
+.AddEdit_form {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 6px;
+  margin: 20px 0;
+  //box-shadow: 0 4px 10px rgba(84, 45, 114, 0.5);
+  transition: all 0.3s ease;
+}
