@@ -1,9 +1,35 @@
+@import "../../styles//variables";
+
 .result_list {
   .x_icon {
     color: red;
   }
   .check_icon {
     color: green;
+  }
+  .nav-tabs {
+    border: 0;
+  }
+  .nav-item {
+    margin-right: 10px;
+  }
+  .nav-link {
+    background-color: #dddd;
+    color: $primary-color;
+    border: 0;
+  }
+  .nav-link.active {
+    color: white;
+    background-color: $primary-color !important;
+    border: 0;
+    color: white !important;
+  }
+  .tab-content {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    padding: 20px;
+    max-height: 400px;
+    overflow-y: scroll;
   }
 }
 .AddEdit_form {

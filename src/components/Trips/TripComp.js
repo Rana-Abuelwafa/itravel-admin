@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
-import { GetTrip_Mains } from "../../slices/tripSlice";
+import { GetTrip_Mains, SaveMainTrip } from "../../slices/tripSlice";
 import { GetDestination_Mains } from "../../slices/destinationSlice";
 import { Form, Row, Col, Button, FormCheck, Table } from "react-bootstrap";
 import {
@@ -13,19 +13,29 @@ import {
   FaImage,
   FaCheck,
   FaSearch,
+  FaUpload,
+  FaTimes,
+  FaUndo,
+  FaDollarSign,
 } from "react-icons/fa";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
-import { FaX } from "react-icons/fa6";
+import { FaDeleteLeft, FaX } from "react-icons/fa6";
 import "./trips.scss";
+import { FiDelete } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 function TripComp() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(""); // State for search functionality
   const [destination_id, setDestinationId] = useState(0);
   const [showPopup, setShowPopup] = useState(false); // State for popup visibility
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [filterExpanded, setFilterExpanded] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [activeTrip, setActiveTrip] = useState({});
+  const [isChecked, setIsChecked] = useState({});
   const [formData, setFormData] = useState({
     id: 0,
     trip_default_name: "",
@@ -56,25 +66,68 @@ function TripComp() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(SaveMainDestination(formData)).then((result) => {
+    dispatch(SaveMainTrip(formData)).then((result) => {
       if (result.payload && result.payload.success) {
         setShowPopup(false);
         setFormData({
           id: 0,
-          dest_default_name: "",
-          dest_code: "",
+          trip_default_name: "",
+          trip_code: "",
           active: true,
-          country_code: "",
+          trip_duration: "",
+          pickup: "",
+          show_in_top: false,
+          show_in_slider: false,
+          destination_id: 0,
           route: "",
         });
-        let data = { country_code: "", lang_code: "en", currency_code: "" };
-        dispatch(GetDestinations(data));
+        setIsUpdate(false);
+        dispatch(GetTrip_Mains(0));
       } else {
         setShowPopup(true);
         setPopupMessage(result.payload.errors);
       }
     });
   };
+  const handleEdit = (trip) => {
+    setIsUpdate(true);
+    setFormData({
+      id: trip.id,
+      trip_default_name: trip.trip_default_name,
+      trip_code: trip.trip_code,
+      active: true,
+      trip_duration: trip.trip_duration,
+      pickup: trip.pickup,
+      show_in_top: trip.show_in_top,
+      show_in_slider: trip.show_in_slider,
+      destination_id: trip.destination_id,
+      route: trip.route,
+    });
+  };
+  const handleDelete = (trip, isDelete) => {
+    const data = {
+      id: trip.id,
+      trip_default_name: trip.trip_default_name,
+      trip_code: trip.trip_code,
+      active: isDelete ? false : true,
+      trip_duration: trip.trip_duration,
+      pickup: trip.pickup,
+      show_in_top: trip.show_in_top,
+      show_in_slider: trip.show_in_slider,
+      destination_id: trip.destination_id,
+      route: trip.route,
+    };
+    dispatch(SaveMainTrip(data)).then((result) => {
+      if (result.payload && result.payload.success) {
+        setShowPopup(false);
+        dispatch(GetTrip_Mains(0));
+      } else {
+        setShowPopup(true);
+        setPopupMessage(result.payload.errors);
+      }
+    });
+  };
+
   return (
     <section className="layout_section">
       <div className="d-flex justify-content-between align-items-center header_title">
@@ -113,11 +166,12 @@ function TripComp() {
             <Col md={4}>
               {" "}
               <Form.Group className="mb-3">
-                {/* <Form.Label>Code</Form.Label> */}
+                {/* <Form.Label>Default Name</Form.Label> */}
                 <Form.Control
                   type="text"
-                  placeholder="Code"
-                  name="trip_code"
+                  placeholder="default name"
+                  name="trip_default_name"
+                  value={formData.trip_default_name}
                   onChange={handleInputChange}
                   required
                   className="formInput"
@@ -127,17 +181,19 @@ function TripComp() {
             <Col md={4}>
               {" "}
               <Form.Group className="mb-3">
-                {/* <Form.Label>Default Name</Form.Label> */}
+                {/* <Form.Label>Code</Form.Label> */}
                 <Form.Control
                   type="text"
-                  placeholder="default name"
-                  name="trip_default_name"
+                  placeholder="Code"
+                  name="trip_code"
                   onChange={handleInputChange}
                   required
+                  value={formData.trip_code}
                   className="formInput"
                 />
               </Form.Group>
             </Col>
+
             <Col md={4}>
               {" "}
               <Form.Group controlId="service">
@@ -153,7 +209,7 @@ function TripComp() {
                   <option value="">select Destination</option>
                   {DestinationMain &&
                     DestinationMain?.map((dest, index) => (
-                      <option key={index} value={dest.destination_id}>
+                      <option key={index} value={dest.id}>
                         {dest.dest_code} - {dest.dest_default_name}
                       </option>
                     ))}
@@ -162,7 +218,22 @@ function TripComp() {
             </Col>
           </Row>
           <Row>
-            <Col md={4} xs={12}>
+            <Col md={4}>
+              {" "}
+              <Form.Group className="mb-3">
+                {/* <Form.Label>Code</Form.Label> */}
+                <Form.Control
+                  type="text"
+                  placeholder="route"
+                  name="route"
+                  onChange={handleInputChange}
+                  required
+                  value={formData.route}
+                  className="formInput"
+                />
+              </Form.Group>
+            </Col>
+            <Col md={2} xs={12}>
               <Form.Group className="mb-3" controlId="packageName">
                 <Form.Control
                   type="text"
@@ -170,22 +241,23 @@ function TripComp() {
                   name="trip_duration"
                   onChange={handleInputChange}
                   required
+                  value={formData.trip_duration}
                   className="formInput"
                 />
               </Form.Group>
             </Col>
-            <Col md={4} xs={12}>
+            <Col md={2} xs={12}>
               <Form.Group className="mb-3" controlId="packageName">
                 <Form.Control
                   type="text"
                   placeholder="pickup"
                   name="pickup"
                   onChange={handleInputChange}
-                  required
                   className="formInput"
                 />
               </Form.Group>
             </Col>
+
             <Col md={2} xs={12}>
               <Form.Group className="mb-3" controlId="packageName">
                 <FormCheck
@@ -228,7 +300,15 @@ function TripComp() {
                 type="submit"
                 className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
               >
-                <FaPlus className="me-1" /> Add
+                {!isUpdate ? (
+                  <>
+                    <FaPlus className="me-1" /> Add
+                  </>
+                ) : (
+                  <>
+                    <FaUpload className="me-1" /> Update
+                  </>
+                )}
               </Button>
             </Col>
           </Row>
@@ -248,6 +328,7 @@ function TripComp() {
               <th>show in slider</th>
               <th>destination</th>
               <th>route</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -257,7 +338,26 @@ function TripComp() {
                   .toLowerCase()
                   .includes(searchTerm.toLowerCase())
               ).map((trip, index) => (
-                <tr key={index}>
+                <tr
+                  key={index}
+                  className={trip.active ? "active-row" : "inactive-row"}
+                >
+                  {/* <td>
+                    {" "}
+                    <Form.Group className="mb-3" controlId="packageName">
+                      <FormCheck
+                        type="checkbox"
+                        id="isChecked"
+                        label=""
+                        name="isChecked"
+                        checked={isChecked}
+                        onChange={(e) => {
+                          setActiveTrip(trip);
+                          setIsChecked(e.target.checked);
+                        }}
+                      />
+                    </Form.Group>
+                  </td> */}
                   <td>{trip.trip_code}</td>
                   <td>{trip.trip_default_name}</td>
                   <td>{trip.trip_duration}</td>
@@ -266,7 +366,7 @@ function TripComp() {
                     {trip.show_in_top ? (
                       <FaCheck className="check_icon" />
                     ) : (
-                      <FaX className="x_icon" />
+                      <FaTimes className="x_icon" />
                     )}
                   </td>
                   <td>
@@ -278,6 +378,50 @@ function TripComp() {
                   </td>
                   <td>{trip.dest_default_name}</td>
                   <td>{trip.route}</td>
+
+                  <td>
+                    {" "}
+                    {trip.active && (
+                      <button
+                        className="btn btn-sm action_btn yellow-btn"
+                        onClick={() => handleEdit(trip)}
+                        title="Edit"
+                      >
+                        <FaEdit />
+                      </button>
+                    )}
+                    {trip.active ? (
+                      <button
+                        className="btn btn-sm red-btn action_btn"
+                        onClick={() => handleDelete(trip, true)}
+                        title="delete"
+                      >
+                        <FaTrash />
+                      </button>
+                    ) : (
+                      <button
+                        className="btn btn-sm red-btn action_btn"
+                        onClick={() => handleDelete(trip, false)}
+                        title="active"
+                      >
+                        <FaUndo />
+                      </button>
+                    )}
+                    {/* <button
+                      className="btn btn-sm  ms-2 purble-btn action_btn"
+                      // onClick={() => handleAddImage(dest)}
+                      title="Add Image"
+                    >
+                      <FaImage />
+                    </button>
+                    <button
+                      className="btn btn-sm action_btn dark-purble-btn"
+                      //onClick={() => handleAddTranslation(dest)}
+                      title="Price"
+                    >
+                      <FaDollarSign />
+                    </button> */}
+                  </td>
                 </tr>
               ))}
           </tbody>

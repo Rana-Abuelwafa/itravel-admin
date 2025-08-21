@@ -326,7 +326,7 @@ function DestinationComp() {
                   {Countries &&
                     Countries?.map((country, index) => (
                       <option key={index} value={country.code}>
-                        {country.code} - {country.code}
+                        {country.code}
                       </option>
                     ))}
                 </Form.Control>
@@ -403,21 +403,21 @@ function DestinationComp() {
                     <td>
                       <div className="d-flex">
                         <button
-                          className="btn btn-sm btn-info me-2 green-btn"
+                          className="btn btn-sm action_btn green-btn"
                           onClick={() => handleAddTranslation(dest)}
                           title="Add Translation"
                         >
                           <FaGlobe />
                         </button>
                         <button
-                          className="btn btn-sm btn-warning me-2 yellow-btn"
+                          className="btn btn-sm action_btn yellow-btn"
                           onClick={() => handleEdit(dest)}
                           title="Edit"
                         >
                           <FaEdit />
                         </button>
                         <button
-                          className="btn btn-sm btn-danger"
+                          className="btn btn-sm btn-danger action_btn"
                           onClick={() => handleDeleteClick(dest)}
                           title="Delete"
                           disabled={!dest.active}
@@ -425,7 +425,7 @@ function DestinationComp() {
                           <FaTrash />
                         </button>
                         <button
-                          className="btn btn-sm  ms-2 purble-btn"
+                          className="btn btn-sm  ms-2 purble-btn action_btn"
                           onClick={() => handleAddImage(dest)}
                           title="Add Image"
                         >
