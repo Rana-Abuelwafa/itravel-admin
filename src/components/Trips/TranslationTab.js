@@ -23,6 +23,7 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
     trip_details: "",
     important_info: "",
     trip_not_includes: "",
+    delete: false,
   });
   const { loading, error } = useSelector((state) => state.trips);
   const handleInputChange = (e) => {
@@ -44,6 +45,7 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
         trip_details: data.trip_details,
         important_info: data.important_info,
         trip_not_includes: data.trip_not_includes,
+        delete: false,
       });
     } else {
       setFormData({
@@ -57,13 +59,15 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
         trip_details: "",
         important_info: "",
         trip_not_includes: "",
+        delete: false,
       });
     }
     return () => {};
   }, [data]);
 
-  const saveData = (e) => {
+  const saveData = (e, isDelete) => {
     e.preventDefault();
+    formData["delete"] = isDelete;
     formData["lang_code"] = lang_code;
     dispatch(SaveTripTranslation(formData)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -79,7 +83,8 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
   };
   return (
     <>
-      <Form onSubmit={saveData}>
+      {/* onSubmit={saveData} */}
+      <Form>
         {" "}
         <Row>
           <Form.Label column="lg" lg={2}>
@@ -194,22 +199,24 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
             </Col>
           ) : (
             <>
-              <Col xs={12} md={{ span: 4, offset: 4 }}>
+              <Col xs={12} md={{ span: 3, offset: 6 }}>
                 <Button
                   variant="primary"
                   type="submit"
-                  className="darkBlue-Btn FullWidthBtn"
-                >
-                  <FaUpload className="me-1" /> Update
-                </Button>
-              </Col>
-              <Col xs={12} md={{ span: 4, offset: 4 }}>
-                <Button
-                  variant="primary"
-                  type="submit"
-                  className="darkBlue-Btn FullWidthBtn"
+                  className="red-btn FullWidthBtn"
+                  onClick={(e) => saveData(e, true)}
                 >
                   <FaTrash className="me-1" /> Delete
+                </Button>
+              </Col>
+              <Col xs={12} md={3}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="darkBlue-Btn FullWidthBtn"
+                  onClick={(e) => saveData(e, false)}
+                >
+                  <FaUpload className="me-1" /> Update
                 </Button>
               </Col>
             </>

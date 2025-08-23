@@ -78,7 +78,9 @@ function TripTranslation() {
             })}
           </Tabs>
         ) : (
-          <p>No Data</p>
+          <div className="centerSection">
+            <p>No data</p>
+          </div>
         )}
       </div>
       {loading ? <LoadingPage /> : null}

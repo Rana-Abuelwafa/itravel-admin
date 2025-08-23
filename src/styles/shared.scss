@@ -205,6 +205,9 @@ a:active {
   //   text-align: center;
   //   border-bottom: 1px solid #ccc !important;
   // }
+  .btn-lst {
+    justify-content: center;
+  }
   .action_btn {
     margin: 3px;
     border: 0;
@@ -314,4 +317,7 @@ a:active {
     color: $primary-color;
     border: 0;
   }
+}
+.divider {
+  margin: 30px 0;
 }

@@ -57,7 +57,7 @@ export const SaveMainTrip = createAsyncThunk(
   }
 );
 
-//Get traips transaltions list grouping by lang
+//Get trips transaltions list grouping by lang
 export const GetTripTranslationGrp = createAsyncThunk(
   "trips/GetTripTranslationGrp",
   async (trip_id, { rejectWithValue }) => {
@@ -73,7 +73,22 @@ export const GetTripTranslationGrp = createAsyncThunk(
     }
   }
 );
-
+//Get traips transaltions list grouping by lang
+export const GetTrip_Prices = createAsyncThunk(
+  "trips/GetTrip_Prices",
+  async (trip_id, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/GetTrip_Prices?trip_id=` + trip_id,
+        {},
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 //save trip translations
 export const SaveTripTranslation = createAsyncThunk(
   "trips/SaveTripTranslation",
@@ -81,6 +96,23 @@ export const SaveTripTranslation = createAsyncThunk(
     try {
       const response = await axios.post(
         `${BASE_URL}/SaveTripTranslation`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//save trip price
+export const SaveTripPrices = createAsyncThunk(
+  "trips/SaveTripPrices",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/SaveTripPrices`,
         formData,
         getAuthHeaders(false)
       );
@@ -98,6 +130,7 @@ const tripSlice = createSlice({
     error: null,
     TripsImages: [],
     TranslationsData: [],
+    TripPriceList: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -126,6 +159,30 @@ const tripSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(SaveTripPrices.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveTripPrices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveTripPrices.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetTrip_Prices.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTrip_Prices.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.TripPriceList = action.payload;
+      })
+      .addCase(GetTrip_Prices.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addMatcher(
         (action) => action.type.endsWith("/pending"),
         (state) => {
