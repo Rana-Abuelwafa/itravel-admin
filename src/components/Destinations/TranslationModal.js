@@ -21,29 +21,17 @@ const TranslationModal = ({
   // Handle translation submission
   const handleTranslationSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const result = await dispatch(
-        SaveDestinationTranslations(currentTranslation)
-      ).unwrap();
-      let data = { country_code: "", lang_code: "en", currency_code: "" };
-      dispatch(GetDestinations(data));
-      setShow(false);
-      setPopupMessage(
-        currentTranslation.id
-          ? "Translation updated successfully"
-          : "Translation added successfully"
-      );
-      setPopupType("success");
-      setShowPopup(true);
-    } catch (error) {
-      const errorMessage =
-        typeof error === "string"
-          ? error
-          : error.message || "Failed to save  translation";
-      setPopupMessage(errorMessage);
-      setPopupType("error");
-      setShowPopup(true);
-    }
+    dispatch(SaveDestinationTranslations(currentTranslation)).then((result) => {
+      if (result.payload && result.payload.success) {
+        setShow(false);
+        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        dispatch(GetDestinations(data));
+      } else {
+        setShowPopup(true);
+        setPopupType("error");
+        setPopupMessage(result.payload.errors);
+      }
+    });
   };
 
   // Handle translation input changes

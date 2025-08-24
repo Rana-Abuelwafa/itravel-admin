@@ -56,7 +56,7 @@ const PickupTranslationModal = ({
   return (
     <Modal show={show} onHide={() => setShow(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>{currentTranslation?.id ? "Edit" : "Add"}</Modal.Title>
+        <Modal.Title>{currentTranslation?.id > 0 ? "Edit" : "Add"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {currentTranslation && (

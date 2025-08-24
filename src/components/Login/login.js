@@ -131,7 +131,7 @@ function Login() {
             Sign In
           </Button>
         </Form>
-        {loading && <LoadingPage />}
+        {loading == true ? <LoadingPage /> : null}
         {showPopup == true ? (
           <PopUp
             show={showPopup}

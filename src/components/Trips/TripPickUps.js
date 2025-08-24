@@ -14,6 +14,7 @@ import {
 import {
   GetPickupsAllForTrip,
   SaveMainTripPickups,
+  SaveTripPickupsTranslations,
 } from "../../slices/tripSlice";
 import { useSelector, useDispatch } from "react-redux";
 import LoadingPage from "../Loader/LoadingPage";
@@ -127,7 +128,38 @@ function TripPickUps() {
       delete: false,
     });
   };
-
+  const handleDeleteTranslation = (trans) => {
+    let data = {
+      id: trans.id,
+      trip_pickup_id: trans.trip_pickup_id,
+      lang_code: trans.lang_code,
+      pickup_name: trans.pickup_name,
+      pickup_description: trans.pickup_description,
+      delete: true,
+    };
+    dispatch(SaveTripPickupsTranslations(data)).then((result) => {
+      if (result.payload && result.payload.success) {
+        let data = { trip_id: Number(trip_id), trip_type: 1 };
+        dispatch(GetPickupsAllForTrip(data));
+        setShowPopup(false);
+      } else {
+        setShowPopup(true);
+        setPopupType("error");
+        setPopupMessage(result.payload.errors);
+      }
+    });
+  };
+  const handleEditTranslation = (trans) => {
+    setCurrentTranslation({
+      id: trans.id,
+      trip_pickup_id: trans.trip_pickup_id,
+      lang_code: trans.lang_code,
+      pickup_name: trans.pickup_name,
+      pickup_description: trans.pickup_description,
+      delete: false,
+    });
+    setShowTranslationModal(true);
+  };
   // Handle adding a translation
   const handleAddTranslation = (pickup) => {
     setCurrentMainPickUp(pickup);
@@ -273,7 +305,7 @@ function TripPickUps() {
                         </span>
                         <div>
                           {" "}
-                          <button
+                          <Button
                             className="btn btn-sm action_btn dark-purble-btn"
                             onClick={(e) => {
                               e.stopPropagation(); // prevent accordion toggle
@@ -282,7 +314,7 @@ function TripPickUps() {
                             title="Add Translation"
                           >
                             <FaGlobe />
-                          </button>
+                          </Button>
                           <Button
                             className="btn btn-sm action_btn yellow-btn"
                             onClick={(e) => {
@@ -326,8 +358,8 @@ function TripPickUps() {
                                   <Button
                                     className="btn btn-sm action_btn yellow-btn"
                                     onClick={(e) => {
-                                      e.stopPropagation(); // prevent accordion toggle
-                                      //handleClick(1);
+                                      e.stopPropagation();
+                                      handleEditTranslation(trans); // prevent accordion toggle
                                     }}
                                   >
                                     <FaEdit />
@@ -336,7 +368,7 @@ function TripPickUps() {
                                     className="btn btn-sm action_btn red-btn"
                                     onClick={(e) => {
                                       e.stopPropagation(); // prevent accordion toggle
-                                      //handleClick(1);
+                                      handleDeleteTranslation(trans);
                                     }}
                                   >
                                     <FaTrash />

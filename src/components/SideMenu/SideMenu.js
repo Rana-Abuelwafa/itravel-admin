@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   FaCar,
@@ -26,14 +26,31 @@ import {
   FaMap,
   FaMapMarked,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import TripsSubMenu from "./TripsSubMenu";
 export default function SideMenu() {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
-  const logOut = {};
+  const [MyName, setMyName] = useState("");
+  const logOut = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/");
+  };
   const toggleSubmenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
+  useEffect(() => {
+    const userLocal = localStorage.getItem("user");
+    if (userLocal) {
+      const user = JSON.parse(userLocal);
+      if (user) {
+        setMyName(`${user.firstName} ${user.lastName}`);
+      }
+    }
+  }, []);
+
   return (
     <div className={`side-menu ${collapsed ? "collapsed" : ""}`}>
       {/* {!collapsed && <h3>Menu</h3>} */}
@@ -141,7 +158,7 @@ export default function SideMenu() {
         <div className="footer-content">
           <div className="user-info">
             <FiUser className="user-icon" />
-            {/* {!collapsed && <span className="user-title">{MyName}</span>} */}
+            {!collapsed && <span className="user-title">{MyName}</span>}
           </div>
 
           <div className="menu-actions">
@@ -150,12 +167,12 @@ export default function SideMenu() {
               {!collapsed && <span>Search</span>}
             </button>
 
-            {/* {MyName && ( */}
-            <button className="menu-action-button" onClick={logOut}>
-              <FiLogOut className="action-icon" />
-              {!collapsed && <span>Logout</span>}
-            </button>
-            {/* )} */}
+            {MyName && (
+              <button className="menu-action-button" onClick={logOut}>
+                <FiLogOut className="action-icon" />
+                {!collapsed && <span>Logout</span>}
+              </button>
+            )}
           </div>
         </div>
       </div>

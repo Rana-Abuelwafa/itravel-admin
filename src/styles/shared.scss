@@ -119,7 +119,7 @@ a:active {
 }
 
 .yellow-btn {
-  color: white;
+  color: white !important;
   background-color: $yellow-btn !important;
   &:hover {
     color: white;

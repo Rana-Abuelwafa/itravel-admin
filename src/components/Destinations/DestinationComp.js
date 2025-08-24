@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import {
   GetDestinations,
   SaveMainDestination,
+  SaveDestinationTranslations,
 } from "../../slices/destinationSlice";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { Countries } from "../../helper/Countries";
@@ -14,30 +15,29 @@ import {
   FaGlobe,
   FaChevronDown,
   FaImage,
+  FaUpload,
 } from "react-icons/fa";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
 import { Accordion, Table } from "react-bootstrap";
 import TranslationModal from "./TranslationModal";
 import ImagesModal from "./ImagesModal";
+import { FiRefreshCcw } from "react-icons/fi";
 function DestinationComp() {
   const dispatch = useDispatch();
   const { destinations, loading, error } = useSelector(
     (state) => state.destinations
   );
+  const [filterExpanded, setFilterExpanded] = useState(false);
   const [showTranslationModal, setShowTranslationModal] = useState(false);
   const [currentMainDest, setCurrentMainDest] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [currentTranslation, setCurrentTranslation] = useState(null); // State for current translation being edited
   const [expandedRows, setExpandedRows] = useState([]); // State for expanded rows (translations)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false); // State for delete confirmation popup
-  const [packageToDelete, setPackageToDelete] = useState(null); // State for package to be deleted
-  const [showTranslationDeleteConfirm, setShowTranslationDeleteConfirm] =
-    useState(false); // State for translation delete confirmation popup
-  const [translationToDelete, setTranslationToDelete] = useState(null); // State for translation to be deleted
   const [showPopup, setShowPopup] = useState(false); // State for popup visibility
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
+  const [isUpdate, setIsUpdate] = useState(0);
   const [formData, setFormData] = useState({
     id: 0,
     dest_default_name: "",
@@ -63,6 +63,62 @@ function DestinationComp() {
     dispatch(SaveMainDestination(formData)).then((result) => {
       if (result.payload && result.payload.success) {
         setShowPopup(false);
+
+        setFormData({
+          id: 0,
+          dest_default_name: "",
+          dest_code: "",
+          active: true,
+          country_code: "",
+          route: "",
+        });
+        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        dispatch(GetDestinations(data));
+      } else {
+        setShowPopup(true);
+        setPopupMessage(result.payload.errors);
+      }
+      setIsUpdate(false);
+    });
+  };
+  const resetForm = () => {
+    setFormData({
+      id: 0,
+      dest_default_name: "",
+      dest_code: "",
+      active: true,
+      country_code: "",
+      route: "",
+    });
+    setIsUpdate(false);
+  };
+  // Handle editing a destination
+  const handleEdit = async (dest) => {
+    setIsUpdate(true);
+    setFilterExpanded(true);
+    setFormData({
+      id: dest.destination_id,
+      dest_default_name: dest.dest_default_name,
+      dest_code: dest.dest_code,
+      active: true,
+      country_code: dest.country_code,
+      route: dest.route,
+    });
+  };
+
+  // Handle deleting a destination
+  const handleDeleteClick = (dest) => {
+    let row = {
+      id: dest.destination_id,
+      dest_default_name: dest.dest_default_name,
+      dest_code: dest.dest_code,
+      active: false,
+      country_code: dest.country_code,
+      route: dest.route,
+    };
+    dispatch(SaveMainDestination(row)).then((result) => {
+      if (result.payload && result.payload.success) {
+        setShowPopup(false);
         setFormData({
           id: 0,
           dest_default_name: "",
@@ -78,50 +134,6 @@ function DestinationComp() {
         setPopupMessage(result.payload.errors);
       }
     });
-  };
-
-  // Handle editing a package
-  const handleEdit = async (pkg) => {
-    // try {
-    //   dispatch(setCurrentPackage(pkg));
-    //   dispatch(fetchPackages());
-    // } catch (error) {
-    //   const errorMessage =
-    //     typeof error === "string"
-    //       ? error
-    //       : error.message || "Failed to edit package";
-    //   setPopupMessage(errorMessage);
-    //   setPopupType("error");
-    //   setShowPopup(true);
-    // }
-  };
-
-  // Handle deleting a package
-  const handleDeleteClick = (pkg) => {
-    setPackageToDelete(pkg);
-    setShowDeleteConfirm(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    // setShowDeleteConfirm(false);
-    // try {
-    //   const result = await dispatch(
-    //     savePackage({ ...packageToDelete, active: false })
-    //   ).unwrap();
-    //   dispatch(fetchPackages());
-    //   setPopupMessage("Package deleted successfully");
-    //   setPopupType("success");
-    //   setShowPopup(true);
-    // } catch (error) {
-    //   const errorMessage =
-    //     typeof error === "string"
-    //       ? error
-    //       : error.message || "Failed to delete package";
-    //   setPopupMessage(errorMessage);
-    //   setPopupType("error");
-    //   setShowPopup(true);
-    // }
-    // setPackageToDelete(null);
   };
 
   // Handle adding a translation
@@ -140,8 +152,24 @@ function DestinationComp() {
 
   // Handle deleting a translation
   const handleDeleteTranslationClick = (translation) => {
-    // setTranslationToDelete(translation);
-    // setShowTranslationDeleteConfirm(true);
+    let row = {
+      id: translation.id,
+      destination_id: translation.destination_id,
+      lang_code: translation.lang_code,
+      dest_name: translation.dest_name,
+      dest_description: translation.dest_description,
+      active: false,
+    };
+    dispatch(SaveDestinationTranslations(row)).then((result) => {
+      if (result.payload && result.payload.success) {
+        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        dispatch(GetDestinations(data));
+      } else {
+        setShowPopup(true);
+        setPopupType("error");
+        setPopupMessage(result.payload.errors);
+      }
+    });
   };
 
   const handleDeleteTranslationConfirm = async () => {
@@ -281,84 +309,117 @@ function DestinationComp() {
     <section className="layout_section">
       <div className="d-flex justify-content-between align-items-center header_title">
         <h2 className="mb-4 page-title">Destination Setting</h2>
+        <Button
+          variant="light"
+          onClick={() => setFilterExpanded(!filterExpanded)}
+          className="filter-toggle-btn mb-4"
+        >
+          {filterExpanded ? <FaChevronUp /> : <FaChevronDown />}
+          <span className="ms-2">Add</span>
+        </Button>
       </div>
-      <div className="dest_form">
-        <Form onSubmit={onSubmit} className="mb-4 form_crud">
-          <Row>
-            <Col xs={12} md={3} className="mb-2 mb-md-0">
-              <Form.Group className="mb-3">
-                <Form.Label>Code</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Code"
-                  name="dest_code"
-                  onChange={handleInputChange}
-                  required
-                  className="formInput"
-                />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3} className="mb-2 mb-md-0">
-              <Form.Group className="mb-3">
-                <Form.Label>Default Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="default name"
-                  name="dest_default_name"
-                  onChange={handleInputChange}
-                  required
-                  className="formInput"
-                />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3} className="mb-2 mb-md-0">
-              <Form.Group controlId="service">
-                <Form.Label>Country</Form.Label>
-                <Form.Control
-                  as="select"
-                  name="country_code"
-                  onChange={handleInputChange}
-                  value={formData.country_code}
-                  required
-                  className="formInput"
-                >
-                  <option value="">select Country Code</option>
-                  {Countries &&
-                    Countries?.map((country, index) => (
-                      <option key={index} value={country.code}>
-                        {country.code}
-                      </option>
-                    ))}
-                </Form.Control>
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3} className="mb-2 mb-md-0">
-              <Form.Group className="mb-3">
-                <Form.Label>Route</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="route"
-                  name="route"
-                  onChange={handleInputChange}
-                  required
-                  className="formInput"
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={12} md={{ span: 3, offset: 9 }}>
-              <Button
-                variant="primary"
-                type="submit"
-                className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
-              >
-                <FaPlus className="me-1" /> Add
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </div>
+      {filterExpanded && (
+        <div className="dest_form">
+          <Form onSubmit={onSubmit} className="mb-4 form_crud">
+            <Row>
+              <Col xs={12} md={3} className="mb-2 mb-md-0">
+                <Form.Group className="mb-3">
+                  <Form.Label>Code</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Code"
+                    name="dest_code"
+                    onChange={handleInputChange}
+                    value={formData.dest_code}
+                    required
+                    className="formInput"
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={12} md={3} className="mb-2 mb-md-0">
+                <Form.Group className="mb-3">
+                  <Form.Label>Default Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="default name"
+                    name="dest_default_name"
+                    onChange={handleInputChange}
+                    value={formData.dest_default_name}
+                    required
+                    className="formInput"
+                  />
+                </Form.Group>
+              </Col>
+              <Col xs={12} md={3} className="mb-2 mb-md-0">
+                <Form.Group controlId="service">
+                  <Form.Label>Country</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="country_code"
+                    onChange={handleInputChange}
+                    value={formData.country_code}
+                    required
+                    className="formInput"
+                  >
+                    <option value="">select Country Code</option>
+                    {Countries &&
+                      Countries?.map((country, index) => (
+                        <option key={index} value={country.code}>
+                          {country.code}
+                        </option>
+                      ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+              <Col xs={12} md={3} className="mb-2 mb-md-0">
+                <Form.Group className="mb-3">
+                  <Form.Label>Route</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="route"
+                    name="route"
+                    onChange={handleInputChange}
+                    required
+                    value={formData.route}
+                    className="formInput"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              {isUpdate ? (
+                <>
+                  <Col xs={12} md={{ span: 2, offset: 8 }}>
+                    {" "}
+                    <Button className="darkBlue-Btn FullWidthBtn" type="submit">
+                      <FaUpload className="me-1" /> update
+                    </Button>
+                  </Col>
+                  <Col xs={12} md={2}>
+                    <Button
+                      className="purble-btn FullWidthBtn"
+                      onClick={resetForm}
+                    >
+                      <FiRefreshCcw className="me-1" /> Reset
+                    </Button>
+                  </Col>
+                </>
+              ) : (
+                <Col xs={12} md={{ span: 3, offset: 9 }}>
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
+                  >
+                    <FaPlus className="me-1" /> Add
+                  </Button>
+                </Col>
+              )}
+            </Row>
+          </Form>
+        </div>
+      )}
+
       <div className="result_list">
         {" "}
         <Table responsive>
