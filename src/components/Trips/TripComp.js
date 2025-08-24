@@ -21,6 +21,7 @@ import {
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
 import { FaDeleteLeft, FaX } from "react-icons/fa6";
+import { FiRefreshCcw } from "react-icons/fi";
 import "./trips.scss";
 import { FiDelete } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +64,21 @@ function TripComp() {
       [e.target.name]: e.target.value,
     });
   };
-
+  const resetForm = () => {
+    setIsUpdate(false);
+    setFormData({
+      id: 0,
+      trip_default_name: "",
+      trip_code: "",
+      active: true,
+      trip_duration: "",
+      pickup: "",
+      show_in_top: false,
+      show_in_slider: false,
+      destination_id: 0,
+      route: "",
+    });
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(SaveMainTrip(formData)).then((result) => {
@@ -91,6 +106,7 @@ function TripComp() {
   };
   const handleEdit = (trip) => {
     setIsUpdate(true);
+    setFilterExpanded(true);
     setFormData({
       id: trip.id,
       trip_default_name: trip.trip_default_name,
@@ -161,7 +177,7 @@ function TripComp() {
         </Button>
       </div>
       {filterExpanded && (
-        <Form className="AddEdit_form" onSubmit={onSubmit}>
+        <Form className="AddEdit_form form_crud" onSubmit={onSubmit}>
           <Row>
             <Col md={4}>
               {" "}
@@ -252,6 +268,7 @@ function TripComp() {
                   type="text"
                   placeholder="pickup"
                   name="pickup"
+                  value={formData.pickup}
                   onChange={handleInputChange}
                   className="formInput"
                 />
@@ -294,6 +311,36 @@ function TripComp() {
             </Col>
           </Row>
           <Row>
+            {isUpdate ? (
+              <>
+                <Col xs={12} md={{ span: 2, offset: 8 }}>
+                  {" "}
+                  <Button className="darkBlue-Btn FullWidthBtn" type="submit">
+                    <FaUpload className="me-1" /> update
+                  </Button>
+                </Col>
+                <Col xs={12} md={2}>
+                  <Button
+                    className="purble-btn FullWidthBtn"
+                    onClick={resetForm}
+                  >
+                    <FiRefreshCcw className="me-1" /> Reset
+                  </Button>
+                </Col>
+              </>
+            ) : (
+              <Col xs={12} md={{ span: 4, offset: 8 }}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
+                >
+                  <FaPlus className="me-1" /> Add
+                </Button>
+              </Col>
+            )}
+          </Row>
+          {/* <Row>
             <Col xs={12} md={{ span: 4, offset: 8 }}>
               <Button
                 variant="primary"
@@ -311,7 +358,7 @@ function TripComp() {
                 )}
               </Button>
             </Col>
-          </Row>
+          </Row> */}
         </Form>
       )}
 

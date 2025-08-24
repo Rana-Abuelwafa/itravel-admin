@@ -32,6 +32,7 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
       [e.target.name]: e.target.value,
     });
   };
+  console.log("data ", data);
   useEffect(() => {
     if (data != null) {
       setFormData({
@@ -62,7 +63,21 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
         delete: false,
       });
     }
-    return () => {};
+    return () => {
+      setFormData({
+        id: 0,
+        trip_id: trip_id,
+        lang_code: "",
+        trip_name: "",
+        trip_description: "",
+        trip_includes: "",
+        trip_highlight: "",
+        trip_details: "",
+        important_info: "",
+        trip_not_includes: "",
+        delete: false,
+      });
+    };
   }, [data]);
 
   const saveData = (e, isDelete) => {

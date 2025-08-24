@@ -25,6 +25,7 @@ function TripTranslation() {
         title="Trip Translation"
         handleTripChange={handleTripChange}
       />
+      <hr className="divider" />
       {/* <div className="d-flex justify-content-between align-items-center header_title">
         <h2 className="mb-4 page-title">Trip Translation</h2>
         <div className="position-relative" style={{ width: "250px" }}>

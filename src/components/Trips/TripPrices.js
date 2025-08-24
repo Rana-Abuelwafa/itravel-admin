@@ -113,7 +113,7 @@ function TripPrices() {
       <hr className="divider" />
       {trip_id > 0 ? (
         <>
-          <Form onSubmit={handleAdd}>
+          <Form onSubmit={handleAdd} className="form_crud">
             <Row>
               <Col md={4}>
                 <Form.Group>

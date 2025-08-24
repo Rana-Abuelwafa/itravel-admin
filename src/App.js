@@ -10,6 +10,7 @@ import MainLayout from "./components/MainLayout";
 import DestinationComp from "./components/Destinations/DestinationComp";
 import TripTranslation from "./components/Trips/TripTranslation";
 import TripPrices from "./components/Trips/TripPrices";
+import TripPickUps from "./components/Trips/TripPickUps";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/trips" element={<Trips />} />
           <Route path="/trips/translation" element={<TripTranslation />} />
           <Route path="/trips/prices" element={<TripPrices />} />
+          <Route path="/trips/pickups" element={<TripPickUps />} />
         </Route>
 
         {/* Redirect to login for unknown paths */}

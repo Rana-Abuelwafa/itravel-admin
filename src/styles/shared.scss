@@ -179,13 +179,45 @@ a:active {
 }
 .header_title {
   margin-bottom: 20px;
+  flex: 1;
 }
 
-//
+.form_crud {
+  background-color: #eee;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin: 20px 0;
+  //box-shadow: 0 4px 10px rgba(84, 45, 114, 0.5);
+  transition: all 0.3s ease;
+}
 .result_list {
   margin: 20px 0;
   .accordion {
     margin-bottom: 20px;
+  }
+  .accordion-header {
+    background-color: #f1e6fb;
+    color: $primary-color !important;
+    font-weight: bold;
+    &:hove {
+      border-color: #542d72 !important;
+    }
+  }
+  .accordion-button {
+    background-color: #f1e6fb !important;
+    color: $primary-color !important;
+    font-weight: bold;
+    &:hove {
+      border-color: #542d72 !important;
+    }
+  }
+  .custom_accord {
+    .accordion-button {
+      &:after {
+        display: none;
+      }
+    }
   }
   th {
     text-align: center;
@@ -193,13 +225,13 @@ a:active {
     text-transform: capitalize;
     font-size: 12px !important;
   }
-  .main_row_data {
-    background-color: #eee !important;
-    td {
-      background-color: #eee !important;
-      border-bottom: 1px solid #ccc !important;
-    }
-  }
+  // .main_row_data {
+  //   background-color: #eee !important;
+  //   td {
+  //     background-color: #eee !important;
+  //     border-bottom: 1px solid #ccc !important;
+  //   }
+  // }
   // td {
   //   padding: 10px;
   //   text-align: center;
@@ -223,14 +255,7 @@ a:active {
       color: white;
     }
   }
-  .accordion-button {
-    background-color: #f1e6fb;
-    color: #3f3f3f !important;
-    font-weight: bold;
-    &:hove {
-      border-color: #542d72 !important;
-    }
-  }
+
   .table th,
   .table td {
     padding: 10px;
@@ -284,11 +309,16 @@ a:active {
   }
 
   .translation-row {
-    background-color: $light-gray;
+    // background-color: $light-gray;
 
+    // td {
+    //   padding: 10px 15px 10px 50px !important;
+    //   border-top: none !important;
+    // }
+    background-color: #eee !important;
     td {
-      padding: 10px 15px 10px 50px !important;
-      border-top: none !important;
+      background-color: #eee !important;
+      border-bottom: 1px solid #ccc !important;
     }
   }
 

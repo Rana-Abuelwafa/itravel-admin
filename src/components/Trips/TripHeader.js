@@ -20,7 +20,7 @@ function TripHeader({ title, handleTripChange }) {
     <div className="d-flex justify-content-between align-items-center header_title">
       <h2 className="mb-4 page-title">{title}</h2>
       <div className="position-relative">
-        <Form.Group controlId="service">
+        <Form.Group>
           {/* <Form.Label>Destination</Form.Label> */}
           <Form.Control
             as="select"

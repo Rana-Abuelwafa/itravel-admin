@@ -283,7 +283,7 @@ function DestinationComp() {
         <h2 className="mb-4 page-title">Destination Setting</h2>
       </div>
       <div className="dest_form">
-        <Form onSubmit={onSubmit} className="mb-4">
+        <Form onSubmit={onSubmit} className="mb-4 form_crud">
           <Row>
             <Col xs={12} md={3} className="mb-2 mb-md-0">
               <Form.Group className="mb-3">

@@ -2,13 +2,14 @@ import React from "react";
 import { Modal, Spinner, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  SaveDestinationTranslations,
-  GetDestinations,
-} from "../../slices/destinationSlice";
+  SaveTripPickupsTranslations,
+  GetPickupsAllForTrip,
+} from "../../slices/tripSlice";
 
-const TranslationModal = ({
+const PickupTranslationModal = ({
   show,
   setShow,
+  trip_id,
   currentTranslation,
   setCurrentTranslation,
   setPopupMessage,
@@ -16,25 +17,25 @@ const TranslationModal = ({
   setShowPopup,
 }) => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.destinations); // Get translation status from Redux store
+  const { loading } = useSelector((state) => state.trips); // Get translation status from Redux store
 
   // Handle translation submission
   const handleTranslationSubmit = async (e) => {
     e.preventDefault();
     try {
-      const result = await dispatch(
-        SaveDestinationTranslations(currentTranslation)
-      ).unwrap();
-      let data = { country_code: "", lang_code: "en", currency_code: "" };
-      dispatch(GetDestinations(data));
-      setShow(false);
-      setPopupMessage(
-        currentTranslation.id
-          ? "Translation updated successfully"
-          : "Translation added successfully"
+      dispatch(SaveTripPickupsTranslations(currentTranslation)).then(
+        (result) => {
+          if (result.payload && result.payload.success) {
+            let data = { trip_id: Number(trip_id), trip_type: 1 };
+            dispatch(GetPickupsAllForTrip(data));
+            setShow(false);
+          } else {
+            setShowPopup(true);
+            setPopupType("error");
+            setPopupMessage(result.payload.errors);
+          }
+        }
       );
-      setPopupType("success");
-      setShowPopup(true);
     } catch (error) {
       const errorMessage =
         typeof error === "string"
@@ -55,9 +56,7 @@ const TranslationModal = ({
   return (
     <Modal show={show} onHide={() => setShow(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>
-          {currentTranslation?.id ? "Edit Translation" : "Add Translation"}
-        </Modal.Title>
+        <Modal.Title>{currentTranslation?.id ? "Edit" : "Add"}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {currentTranslation && (
@@ -76,22 +75,22 @@ const TranslationModal = ({
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>Destination Name</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
-                name="dest_name"
-                value={currentTranslation.dest_name}
+                name="pickup_name"
+                value={currentTranslation.pickup_name}
                 onChange={handleTranslationChange}
                 required
               />
             </Form.Group>
 
             <Form.Group className="mb-3">
-              <Form.Label>destination Description</Form.Label>
+              <Form.Label>Description</Form.Label>
               <Form.Control
                 type="text"
-                name="dest_description"
-                value={currentTranslation.dest_description}
+                name="pickup_description"
+                value={currentTranslation.pickup_description}
                 required
                 onChange={handleTranslationChange}
               />
@@ -109,4 +108,4 @@ const TranslationModal = ({
   );
 };
 
-export default TranslationModal;
+export default PickupTranslationModal;

@@ -73,7 +73,7 @@ export const GetTripTranslationGrp = createAsyncThunk(
     }
   }
 );
-//Get traips transaltions list grouping by lang
+//Get trips transaltions list grouping by lang
 export const GetTrip_Prices = createAsyncThunk(
   "trips/GetTrip_Prices",
   async (trip_id, { rejectWithValue }) => {
@@ -122,6 +122,56 @@ export const SaveTripPrices = createAsyncThunk(
     }
   }
 );
+
+//save main trip pickups
+export const SaveMainTripPickups = createAsyncThunk(
+  "trips/SaveMainTripPickups",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/SaveMainTripPickups`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//save  trip pickups translations
+export const SaveTripPickupsTranslations = createAsyncThunk(
+  "trips/SaveTripPickupsTranslations",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/SaveTripPickupsTranslations`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+//Get pickups with transaltions list
+export const GetPickupsAllForTrip = createAsyncThunk(
+  "trips/GetPickupsAllForTrip",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/GetPickupsAllForTrip`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 const tripSlice = createSlice({
   name: "trips",
   initialState: {
@@ -131,6 +181,7 @@ const tripSlice = createSlice({
     TripsImages: [],
     TranslationsData: [],
     TripPriceList: [],
+    TripPickups: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -179,6 +230,40 @@ const tripSlice = createSlice({
         state.TripPriceList = action.payload;
       })
       .addCase(GetTrip_Prices.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveMainTripPickups.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveMainTripPickups.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveMainTripPickups.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetPickupsAllForTrip.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetPickupsAllForTrip.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.TripPickups = action.payload;
+      })
+      .addCase(GetPickupsAllForTrip.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveTripPickupsTranslations.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveTripPickupsTranslations.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveTripPickupsTranslations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
