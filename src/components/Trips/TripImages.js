@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import TripHeader from "./TripHeader";
-import { Form, Row, Col, Button, Table } from "react-bootstrap";
-import {
-  FaChevronCircleLeft,
-  FaChevronCircleRight,
-  FaChevronLeft,
-  FaChevronRight,
-  FaEdit,
-  FaPlus,
-  FaTimes,
-  FaTrash,
-  FaUpload,
-} from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import {
   GetImgsByTrip,
   SaveTripImage,
@@ -20,6 +9,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import LoadingPage from "../Loader/LoadingPage";
 import PopUp from "../Shared/popup/PopUp";
+import ImageGallery from "../Shared/ImageGallery/ImageGallery";
 
 function TripImages() {
   const dispatch = useDispatch();
@@ -28,8 +18,8 @@ function TripImages() {
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [trip_id, setTrip_id] = useState(0);
   const [images, setImages] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(null);
-  const [defaultImageId, setDefaultImageId] = useState(null);
+  // const [currentIndex, setCurrentIndex] = useState(null);
+  // const [defaultImageId, setDefaultImageId] = useState(null);
   const { loading, error, TripImgs } = useSelector((state) => state.trips);
 
   // Handle file input
@@ -40,7 +30,6 @@ function TripImages() {
       file,
     }));
     //setImages((prev) => [...prev, ...newImages]);
-    console.log("newImages ", files);
     const formData = new FormData();
     formData.append("id", 0);
     formData.append("trip_id", trip_id);
@@ -89,37 +78,37 @@ function TripImages() {
     });
   };
 
-  // Open modal
-  const openModal = (index) => {
-    setCurrentIndex(index);
-  };
+  // // Open modal
+  // const openModal = (index) => {
+  //   setCurrentIndex(index);
+  // };
 
-  // Close modal
-  const closeModal = () => {
-    setCurrentIndex(null);
-  };
+  // // Close modal
+  // const closeModal = () => {
+  //   setCurrentIndex(null);
+  // };
 
-  // Navigate next/prev
-  const prevImage = () => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  };
-  const nextImage = () => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  };
+  // // Navigate next/prev
+  // const prevImage = () => {
+  //   setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  // };
+  // const nextImage = () => {
+  //   setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  // };
 
-  // ✅ Keyboard navigation
-  useEffect(() => {
-    if (currentIndex !== null) {
-      const handleKeyDown = (e) => {
-        if (e.key === "Escape") closeModal();
-        if (e.key === "ArrowLeft") prevImage();
-        if (e.key === "ArrowRight") nextImage();
-      };
+  // // ✅ Keyboard navigation
+  // useEffect(() => {
+  //   if (currentIndex !== null) {
+  //     const handleKeyDown = (e) => {
+  //       if (e.key === "Escape") closeModal();
+  //       if (e.key === "ArrowLeft") prevImage();
+  //       if (e.key === "ArrowRight") nextImage();
+  //     };
 
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [currentIndex, images.length]);
+  //     window.addEventListener("keydown", handleKeyDown);
+  //     return () => window.removeEventListener("keydown", handleKeyDown);
+  //   }
+  // }, [currentIndex, images.length]);
 
   const handleTripChange = (id) => {
     setTrip_id(id);
@@ -178,9 +167,13 @@ function TripImages() {
               </label>
             </div>
           )}
-
           {/* Gallery Grid */}
-          {images && images.length > 0 ? (
+          <ImageGallery
+            images={images}
+            handleRemove={handleRemove}
+            handleSetDefault={handleSetDefault}
+          />
+          {/* {images && images.length > 0 ? (
             <div className="gallery-grid">
               {images.map((img, index) => (
                 <div className="gallery-item" key={img.id}>
@@ -213,7 +206,7 @@ function TripImages() {
           )}
 
           {/* Modal Lightbox */}
-          {currentIndex !== null && (
+          {/* {currentIndex !== null && (
             <div className="lightbox" onClick={closeModal}>
               <button
                 className="close-btn"
@@ -248,9 +241,17 @@ function TripImages() {
                 <FaChevronRight />
               </button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
+      {loading ? <LoadingPage /> : null}
+      <PopUp
+        show={showPopup}
+        closeAlert={() => setShowPopup(false)}
+        msg={popupMessage}
+        type={popupType}
+        autoClose={3000}
+      />
     </section>
   );
 }

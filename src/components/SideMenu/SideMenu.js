@@ -28,10 +28,12 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TripsSubMenu from "./TripsSubMenu";
+import DestinationSubMenu from "./DestinationSubMenu";
 export default function SideMenu() {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+  const [destOpenMenu, setDestOpenMenu] = useState(null);
   const [MyName, setMyName] = useState("");
   const logOut = () => {
     localStorage.removeItem("token");
@@ -40,6 +42,10 @@ export default function SideMenu() {
   };
   const toggleSubmenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
+  };
+
+  const toggleDestSubmenu = (menu) => {
+    setDestOpenMenu(destOpenMenu === menu ? null : menu);
   };
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
@@ -77,10 +83,31 @@ export default function SideMenu() {
           </Link>
         </li>
         <li>
+          <div
+            className={`menu-item ${
+              destOpenMenu === "destinations" ? "open" : ""
+            }`}
+          >
+            <Link to="/destinations" className="left">
+              <FaCity />
+              <span className="menu-label">Destinations</span>
+            </Link>
+            {!collapsed && (
+              <span
+                className="arrow"
+                onClick={() => toggleDestSubmenu("destinations")}
+              >
+                <FaChevronDown className="arrow" />
+              </span>
+            )}
+          </div>
+          <DestinationSubMenu openMenu={destOpenMenu} />
+        </li>
+        {/* <li>
           <Link to="/destinations">
             <FaCity /> <span className="menu-label">Destinations</span>
           </Link>
-        </li>
+        </li> */}
         {/* <li>
           <Link to="/trips">
             <FaShip /> <span className="menu-label">Trips</span>

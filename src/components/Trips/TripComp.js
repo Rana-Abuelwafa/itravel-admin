@@ -212,7 +212,7 @@ function TripComp() {
 
             <Col md={4}>
               {" "}
-              <Form.Group controlId="service">
+              <Form.Group>
                 {/* <Form.Label>Destination</Form.Label> */}
                 <Form.Control
                   as="select"

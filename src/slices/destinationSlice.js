@@ -120,6 +120,22 @@ export const GetImgsByDestination = createAsyncThunk(
   }
 );
 
+//save  Destination translations
+export const UpdateDestinationImage = createAsyncThunk(
+  "destinations/UpdateDestinationImage",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/UpdateDestinationImage`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 const destinationSlice = createSlice({
   name: "destinations",
   initialState: {
@@ -136,33 +152,85 @@ const destinationSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(GetDestinations.pending, (state, action) => {
+        state.loading = true;
+      })
       .addCase(GetDestinations.fulfilled, (state, action) => {
         state.loading = false;
         state.destinations = action.payload;
+      })
+      .addCase(GetDestinations.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveMainDestination.pending, (state, action) => {
+        state.loading = true;
       })
       .addCase(SaveMainDestination.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
       })
+      .addCase(SaveMainDestination.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveDestinationTranslations.pending, (state, action) => {
+        state.loading = true;
+      })
       .addCase(SaveDestinationTranslations.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
       })
+      .addCase(SaveDestinationTranslations.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(saveDestinationImage.pending, (state, action) => {
+        state.loading = true;
+      })
       .addCase(saveDestinationImage.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
+      })
+      .addCase(saveDestinationImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetImgsByDestination.pending, (state, action) => {
+        state.loading = true;
       })
       .addCase(GetImgsByDestination.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.DestinationImages = action.payload;
       })
+      .addCase(GetImgsByDestination.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetDestination_Mains.pending, (state, action) => {
+        state.loading = true;
+      })
       .addCase(GetDestination_Mains.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
         state.DestinationMain = action.payload;
       })
-
+      .addCase(GetDestination_Mains.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(UpdateDestinationImage.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(UpdateDestinationImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(UpdateDestinationImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addMatcher(
         (action) => action.type.endsWith("/pending"),
         (state) => {

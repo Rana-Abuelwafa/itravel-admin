@@ -12,6 +12,7 @@ import TripTranslation from "./components/Trips/TripTranslation";
 import TripPrices from "./components/Trips/TripPrices";
 import TripPickUps from "./components/Trips/TripPickUps";
 import TripImages from "./components/Trips/TripImages";
+import DestinationImages from "./components/Destinations/DestinationImages";
 
 export default function App() {
   return (
@@ -24,7 +25,7 @@ export default function App() {
         <Route element={<MainLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/destinations" element={<DestinationComp />} />
-
+          <Route path="/destinations/images" element={<DestinationImages />} />
           <Route path="/trips" element={<Trips />} />
           <Route path="/trips/translation" element={<TripTranslation />} />
           <Route path="/trips/prices" element={<TripPrices />} />
