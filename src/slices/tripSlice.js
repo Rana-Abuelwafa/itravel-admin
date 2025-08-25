@@ -172,6 +172,57 @@ export const GetPickupsAllForTrip = createAsyncThunk(
     }
   }
 );
+
+//Get images for specific trips
+export const GetImgsByTrip = createAsyncThunk(
+  "trips/GetImgsByTrip",
+  async (trip_id, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/GetImgsByTrip?trip_id=` + trip_id,
+        {},
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//save images for trip
+export const SaveTripImage = createAsyncThunk(
+  "trips/SaveTripImage",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/SaveTripImage`,
+        formData,
+        getAuthHeaders(true)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//save trip main
+export const UpdateTripImage = createAsyncThunk(
+  "trips/UpdateTripImage",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/UpdateTripImage`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 const tripSlice = createSlice({
   name: "trips",
   initialState: {
@@ -182,6 +233,7 @@ const tripSlice = createSlice({
     TranslationsData: [],
     TripPriceList: [],
     TripPickups: [],
+    TripImgs: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -267,7 +319,40 @@ const tripSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
+      .addCase(GetImgsByTrip.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetImgsByTrip.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.TripImgs = action.payload;
+      })
+      .addCase(GetImgsByTrip.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveTripImage.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveTripImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveTripImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(UpdateTripImage.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(UpdateTripImage.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(UpdateTripImage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addMatcher(
         (action) => action.type.endsWith("/pending"),
         (state) => {

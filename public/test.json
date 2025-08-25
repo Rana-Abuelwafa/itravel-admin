@@ -1,0 +1,84 @@
+[
+  {
+    "wish_id": 1,
+    "client_id": "96b8d3c5-cdd6-4497-af19-2cbcd361f129",
+    "wsh_created_at": "2025-08-09 14:25:14.863596",
+    "isfavourite": true,
+    "trip_type": 1,
+    "total_reviews": 0,
+    "review_rate": null,
+    "facilities": [
+      {
+        "facility_name": "Book online and pay on site",
+        "facility_desc": "Book online and pay on site"
+      }
+    ],
+    "imgs": [
+      {
+        "trip_id": 1,
+        "img_path": "http://api.raccoon24.de/images//trips//pyramid-3804374_1920.jpg",
+        "img_name": "pyramid-3804374_1920.jpg",
+        "is_default": true,
+        "id": 1,
+        "created_at": null,
+        "updated_at": null,
+        "created_by": null,
+        "img_resize_path": "http://api.raccoon24.de/",
+        "img_width": null,
+        "img_height": null
+      },
+      {
+        "trip_id": 1,
+        "img_path": "http://api.raccoon24.de/images/trips/اورانج باي.jpg",
+        "img_name": "اورانج باي.jpg",
+        "is_default": false,
+        "id": 2,
+        "created_at": null,
+        "updated_at": null,
+        "created_by": null,
+        "img_resize_path": "http://api.raccoon24.de/",
+        "img_width": null,
+        "img_height": null
+      },
+      {
+        "trip_id": 1,
+        "img_path": "http://api.raccoon24.de/images/trips/hurghada-submarine-tour-1f266-lg.jpg",
+        "img_name": "hurghada-submarine-tour-1f266-lg.jpg",
+        "is_default": false,
+        "id": 3,
+        "created_at": null,
+        "updated_at": null,
+        "created_by": null,
+        "img_resize_path": "http://api.raccoon24.de/",
+        "img_width": null,
+        "img_height": null
+      }
+    ],
+    "trip_trans_id": 2,
+    "trip_description": "Quad Tour Makadi – Desert &amp; Sea",
+    "trip_includes": "",
+    "lang_code": "en",
+    "trip_highlight": "",
+    "trip_id": 1,
+    "trip_name": "Quad Tour Makadi – Desert & Sea",
+    "destination_id": 1,
+    "pickup": null,
+    "show_in_slider": true,
+    "show_in_top": true,
+    "trip_code": "QUADMAKADi",
+    "trip_default_name": "Quad Tour Makadi – Wüste & Meer",
+    "trip_duration": "3",
+    "route": "/Quad Tour Makadi",
+    "currency_code": "USD",
+    "trip_origin_price": 50,
+    "trip_sale_price": 50,
+    "default_img": "http://api.raccoon24.de/images//trips//pyramid-3804374_1920.jpg",
+    "dest_default_name": "Hurghada",
+    "dest_code": "HUR",
+    "country_code": "EG",
+    "dest_route": "Hurghada",
+    "trip_not_includes": "test",
+    "important_info": "test",
+    "trip_details": "testt"
+  }
+]

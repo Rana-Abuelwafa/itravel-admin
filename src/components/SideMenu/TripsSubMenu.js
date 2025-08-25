@@ -12,25 +12,24 @@ function TripsSubMenu({ openMenu }) {
       <li>
         <Link to="/trips/translation">
           <FaGlobe />
-          Translations
+          <span className="menu-label">Translations</span>
         </Link>
       </li>
       <li>
         <Link to="/trips/prices">
-          <FaDollarSign />
-          Prices
+          <FaDollarSign /> <span className="menu-label">Prices</span>
         </Link>
       </li>
       <li>
         <Link to="/trips/pickups">
           <FaMapMarked />
-          Pick ups
+          <span className="menu-label">Pick ups</span>
         </Link>
       </li>
       <li>
         <Link to="/trips/images">
           <FaFileImage />
-          Images
+          <span className="menu-label">Images</span>
         </Link>
       </li>
     </ul>
