@@ -13,6 +13,8 @@ import TripPrices from "./components/Trips/TripPrices";
 import TripPickUps from "./components/Trips/TripPickUps";
 import TripImages from "./components/Trips/TripImages";
 import DestinationImages from "./components/Destinations/DestinationImages";
+import Facility from "./components/Facilities/Facility";
+import TripFacility from "./components/Trips/TripFacility";
 
 export default function App() {
   return (
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/trips/prices" element={<TripPrices />} />
           <Route path="/trips/pickups" element={<TripPickUps />} />
           <Route path="/trips/images" element={<TripImages />} />
+          <Route path="/trips/facility" element={<TripFacility />} />
+          <Route path="/facility" element={<Facility />} />
         </Route>
 
         {/* Redirect to login for unknown paths */}

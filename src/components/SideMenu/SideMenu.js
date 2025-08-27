@@ -23,6 +23,7 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaGlobe,
+  FaInfo,
   FaMap,
   FaMapMarked,
 } from "react-icons/fa";
@@ -175,10 +176,15 @@ export default function SideMenu() {
           </ul>
         </li> */}
         <li>
+          <Link to="/facility">
+            <FaInfo /> <span className="menu-label">Facilities Setting</span>
+          </Link>
+        </li>
+        {/* <li>
           <Link to="/transfer">
             <FaCar /> <span className="menu-label">Transfer</span>
           </Link>
-        </li>
+        </li> */}
       </ul>
       {/* Bottom Section */}
       <div className="side-menu-footer">

@@ -198,3 +198,18 @@
     }
   }
 }
+.fac_check {
+  color: $primary-color;
+  font-weight: 500;
+  margin-bottom: 20px !important;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #ddd;
+  .form-check-input {
+    color: $secondary-color;
+    border: 1px solid $secondary-color;
+    &:checked {
+      background-color: $secondary-color;
+      border-color: $secondary-color;
+    }
+  }
+}

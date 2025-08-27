@@ -24,7 +24,7 @@
   width: 100% !important;
   height: 40px !important;
   // border-radius: 5px !important;
-  margin: 20px 0 !important;
+  margin: 20px 0;
   border-width: 1px !important;
   font-size: 14px !important;
 }
@@ -196,20 +196,43 @@ a:active {
   .accordion {
     margin-bottom: 20px;
   }
-  .accordion-header {
-    background-color: #f1e6fb;
-    color: $primary-color !important;
-    font-weight: bold;
-    &:hove {
-      border-color: #542d72 !important;
+  // .accordion-header {
+  //   background-color: #f1e6fb;
+  //   color: $primary-color !important;
+  //   font-weight: bold;
+  //   &:hove {
+  //     border-color: #542d72 !important;
+  //   }
+  // }
+  .ActiveHeader {
+    .accordion-button {
+      background-color: #f1e6fb;
+      color: $primary-color;
+      font-weight: bold;
+      &:hove {
+        border-color: #542d72;
+      }
+    }
+  }
+  .InActiveHeader {
+    .accordion-button {
+      background-color: lightcoral;
+      color: #cc0000;
+      text-decoration: line-through;
+      // background-color: #f1e6fb;
+      // color: $primary-color;
+      font-weight: bold;
+      &:hove {
+        border-color: #542d72;
+      }
     }
   }
   .accordion-button {
-    background-color: #f1e6fb !important;
-    color: $primary-color !important;
+    background-color: #f1e6fb;
+    color: $primary-color;
     font-weight: bold;
     &:hove {
-      border-color: #542d72 !important;
+      border-color: #542d72;
     }
   }
   .custom_accord {

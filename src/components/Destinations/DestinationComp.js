@@ -485,13 +485,13 @@ function DestinationComp() {
                         >
                           <FaTrash />
                         </button>
-                        <button
+                        {/* <button
                           className="btn btn-sm  ms-2 purble-btn action_btn"
                           onClick={() => handleAddImage(dest)}
                           title="Add Image"
                         >
                           <FaImage />
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

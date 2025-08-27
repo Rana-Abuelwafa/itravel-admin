@@ -3,6 +3,7 @@ import {
   FaDollarSign,
   FaFileImage,
   FaGlobe,
+  FaInfo,
   FaMapMarked,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -30,6 +31,12 @@ function TripsSubMenu({ openMenu }) {
         <Link to="/trips/images">
           <FaFileImage />
           <span className="menu-label">Images</span>
+        </Link>
+      </li>
+      <li>
+        <Link to="/trips/facility">
+          <FaInfo />
+          <span className="menu-label">Facility</span>
         </Link>
       </li>
     </ul>
