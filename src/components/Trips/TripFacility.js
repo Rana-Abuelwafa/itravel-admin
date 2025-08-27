@@ -5,7 +5,10 @@ import { FaEdit, FaPlus, FaTrash, FaUpload } from "react-icons/fa";
 import { useSelector, useDispatch } from "react-redux";
 import LoadingPage from "../Loader/LoadingPage";
 import PopUp from "../Shared/popup/PopUp";
-import { GetFacilityAllWithSelect } from "../../slices/facilitySlice";
+import {
+  GetFacilityAllWithSelect,
+  AssignFacilityToTrip,
+} from "../../slices/facilitySlice";
 function TripFacility() {
   const dispatch = useDispatch();
   const { TripFacility, loading, error } = useSelector(
@@ -25,7 +28,26 @@ function TripFacility() {
     setTrip_id(id);
     dispatch(GetFacilityAllWithSelect(id));
   };
-
+  const handleFacilityChange = (e, facility) => {
+    console.log(e.target.checked);
+    let checked = e.target.checked;
+    let data = {
+      id: facility.fac_trip_id,
+      trip_id: Number(trip_id),
+      facility_id: facility.facility_id,
+      selected: checked,
+      active: true,
+    };
+    dispatch(AssignFacilityToTrip(data)).then((result) => {
+      if (result.payload && result.payload.success) {
+        setShowPopup(false);
+        dispatch(GetFacilityAllWithSelect(trip_id));
+      } else {
+        setShowPopup(true);
+        setPopupMessage(result.payload.errors);
+      }
+    });
+  };
   return (
     <section className="layout_section">
       <TripHeader title="Trip Facility" handleTripChange={handleTripChange} />
@@ -42,6 +64,8 @@ function TripFacility() {
                     id={`check-${index}`}
                     label={fac.facility_default_name}
                     className="fac_check"
+                    checked={fac.selected}
+                    onChange={(e) => handleFacilityChange(e, fac)}
                   />
                 </Col>
               ))

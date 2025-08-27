@@ -64,7 +64,7 @@ export default function SideMenu() {
       {/* Top Bar with Logo and Toggle */}
       <div className="side-menu-topbar">
         {!collapsed && (
-          <img src="./images/logo.png" alt="Logo" className="logo" />
+          <img src="images/logo.png" alt="Logo" className="logo" />
         )}
         <button
           className="toggle-button"

@@ -89,6 +89,23 @@ export const GetFacilityAllWithSelect = createAsyncThunk(
     }
   }
 );
+
+//Assign Facility To Trip
+export const AssignFacilityToTrip = createAsyncThunk(
+  "facility/AssignFacilityToTrip",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/AssignFacilityToTrip`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 const facilitySlice = createSlice({
   name: "facility",
   initialState: {
@@ -142,6 +159,17 @@ const facilitySlice = createSlice({
         state.TripFacility = action.payload;
       })
       .addCase(GetFacilityAllWithSelect.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(AssignFacilityToTrip.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(AssignFacilityToTrip.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(AssignFacilityToTrip.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
