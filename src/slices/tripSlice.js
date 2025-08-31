@@ -40,6 +40,22 @@ export const GetTrip_Mains = createAsyncThunk(
   }
 );
 
+//Get  trip categories list
+export const GetTripCategories = createAsyncThunk(
+  "trips/GetTripCategories",
+  async (destination_id, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/GetTripCategories`,
+        {},
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 //save trip main
 export const SaveMainTrip = createAsyncThunk(
   "trips/SaveMainTrip",
@@ -234,6 +250,7 @@ const tripSlice = createSlice({
     TripPriceList: [],
     TripPickups: [],
     TripImgs: [],
+    TripCategories: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -353,6 +370,19 @@ const tripSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(GetTripCategories.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTripCategories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.TripCategories = action.payload;
+      })
+      .addCase(GetTripCategories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addMatcher(
         (action) => action.type.endsWith("/pending"),
         (state) => {

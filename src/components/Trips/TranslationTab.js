@@ -123,12 +123,21 @@ function TranslationTab({ data, trip_id, lang_code, RefreshList }) {
             description
           </Form.Label>
           <Col>
-            <Editor
+            <Form.Group className="mb-3">
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="trip_description"
+                value={formData.trip_description}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            {/* <Editor
               name="trip_description"
               containerProps={{ style: { resize: "vertical" } }}
               value={formData.trip_description}
               onChange={handleInputChange}
-            />
+            /> */}
           </Col>
         </Row>
         <hr />

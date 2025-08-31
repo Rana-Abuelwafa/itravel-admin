@@ -5,6 +5,7 @@ import { GetTrip_Mains } from "../../slices/tripSlice";
 function TripHeader({ title, handleTripChange }) {
   const dispatch = useDispatch();
   const [trip_id, setTrip_id] = useState(0);
+  const [trip_type, setTrip_Type] = useState(0);
 
   const { TripsMain, loading, error } = useSelector((state) => state.trips);
   useEffect(() => {

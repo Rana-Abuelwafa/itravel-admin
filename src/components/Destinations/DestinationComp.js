@@ -14,20 +14,19 @@ import {
   FaEdit,
   FaGlobe,
   FaChevronDown,
-  FaImage,
   FaUpload,
 } from "react-icons/fa";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
-import { Accordion, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import TranslationModal from "./TranslationModal";
-import ImagesModal from "./ImagesModal";
 import { FiRefreshCcw } from "react-icons/fi";
 function DestinationComp() {
   const dispatch = useDispatch();
   const { destinations, loading, error } = useSelector(
     (state) => state.destinations
   );
+  const [touched, setTouched] = useState(false);
   const [filterExpanded, setFilterExpanded] = useState(false);
   const [showTranslationModal, setShowTranslationModal] = useState(false);
   const [currentMainDest, setCurrentMainDest] = useState(null);
@@ -38,6 +37,7 @@ function DestinationComp() {
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [isUpdate, setIsUpdate] = useState(0);
+  const [dirty, setDirty] = useState(false);
   const [formData, setFormData] = useState({
     id: 0,
     dest_default_name: "",
@@ -46,6 +46,10 @@ function DestinationComp() {
     country_code: "",
     route: "",
   }); // Form state for save Destinations
+
+  const slugRegex = /^(?!-)(?!.*--)[a-zA-Z0-9-]+(?<!-)$/;
+  const isValidSlug =
+    formData.route.length === 0 || slugRegex.test(formData.route);
   // Handle input changes
   const handleInputChange = (e) => {
     setFormData({
@@ -60,26 +64,30 @@ function DestinationComp() {
   }, []);
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(SaveMainDestination(formData)).then((result) => {
-      if (result.payload && result.payload.success) {
-        setShowPopup(false);
-
-        setFormData({
-          id: 0,
-          dest_default_name: "",
-          dest_code: "",
-          active: true,
-          country_code: "",
-          route: "",
-        });
-        let data = { country_code: "", lang_code: "en", currency_code: "" };
-        dispatch(GetDestinations(data));
-      } else {
-        setShowPopup(true);
-        setPopupMessage(result.payload.errors);
-      }
-      setIsUpdate(false);
-    });
+    setTouched(true);
+    if (isValidSlug) {
+      // Proceed with submission logic
+      dispatch(SaveMainDestination(formData)).then((result) => {
+        if (result.payload && result.payload.success) {
+          setShowPopup(false);
+          setFormData({
+            id: 0,
+            dest_default_name: "",
+            dest_code: "",
+            active: true,
+            country_code: "",
+            route: "",
+          });
+          let data = { country_code: "", lang_code: "en", currency_code: "" };
+          dispatch(GetDestinations(data));
+        } else {
+          setShowPopup(true);
+          setPopupMessage(result.payload.errors);
+        }
+        setIsUpdate(false);
+        setFilterExpanded(false);
+      });
+    }
   };
   const resetForm = () => {
     setFormData({
@@ -172,27 +180,6 @@ function DestinationComp() {
     });
   };
 
-  const handleDeleteTranslationConfirm = async () => {
-    // setShowTranslationDeleteConfirm(false);
-    // try {
-    //   const result = await dispatch(
-    //     savePackageTranslation({ ...translationToDelete, delete: true })
-    //   ).unwrap();
-    //   dispatch(fetchPackages());
-    //   setPopupMessage("Translation deleted successfully");
-    //   setPopupType("success");
-    //   setShowPopup(true);
-    // } catch (error) {
-    //   const errorMessage =
-    //     typeof error === "string"
-    //       ? error
-    //       : error.message || "Failed to delete Translation";
-    //   setPopupMessage(errorMessage);
-    //   setPopupType("error");
-    //   setShowPopup(true);
-    // }
-    // setTranslationToDelete(null);
-  };
   const toggleRow = (id) => {
     const currentExpandedRows = [...expandedRows];
     const isRowExpanded = currentExpandedRows.includes(id);
@@ -299,12 +286,8 @@ function DestinationComp() {
       </tr>
     );
   };
-
-  // Handle adding a iamge
-  const handleAddImage = (dest) => {
-    setCurrentMainDest(dest);
-    setShowImageModal(true);
-  };
+  const shouldShowError =
+    (dirty || touched) && !isValidSlug && formData.route?.length > 0;
   return (
     <section className="layout_section">
       <div className="d-flex justify-content-between align-items-center header_title">
@@ -378,11 +361,31 @@ function DestinationComp() {
                     type="text"
                     placeholder="route"
                     name="route"
-                    onChange={handleInputChange}
+                    onChange={(e) => {
+                      if (!dirty) setDirty(true);
+                      handleInputChange(e);
+                    }}
                     required
                     value={formData.route}
                     className="formInput"
+                    onBlur={() => setTouched(true)}
+                    isInvalid={shouldShowError}
+                    isValid={
+                      formData.route?.length > 0 &&
+                      (touched || dirty) &&
+                      isValidSlug
+                    }
                   />
+                  <Form.Control.Feedback
+                    type="invalid"
+                    style={{ fontSize: "12px" }}
+                  >
+                    Only letters, numbers, and hyphens are allowed. No spaces,
+                    special characters, or leading/trailing hyphens.
+                  </Form.Control.Feedback>
+                  {/* <Form.Control.Feedback type="valid">
+                    Looks good!
+                  </Form.Control.Feedback> */}
                 </Form.Group>
               </Col>
             </Row>
@@ -391,7 +394,11 @@ function DestinationComp() {
                 <>
                   <Col xs={12} md={{ span: 2, offset: 8 }}>
                     {" "}
-                    <Button className="darkBlue-Btn FullWidthBtn" type="submit">
+                    <Button
+                      className="darkBlue-Btn FullWidthBtn"
+                      type="submit"
+                      disabled={isValidSlug == false}
+                    >
                       <FaUpload className="me-1" /> update
                     </Button>
                   </Col>
@@ -410,6 +417,7 @@ function DestinationComp() {
                     variant="primary"
                     type="submit"
                     className="w-100 mt-30 darkBlue-Btn FullWidthBtn"
+                    disabled={isValidSlug == false}
                   >
                     <FaPlus className="me-1" /> Add
                   </Button>
@@ -485,13 +493,6 @@ function DestinationComp() {
                         >
                           <FaTrash />
                         </button>
-                        {/* <button
-                          className="btn btn-sm  ms-2 purble-btn action_btn"
-                          onClick={() => handleAddImage(dest)}
-                          title="Add Image"
-                        >
-                          <FaImage />
-                        </button> */}
                       </div>
                     </td>
                   </tr>
@@ -527,16 +528,6 @@ function DestinationComp() {
         setPopupType={setPopupType}
         setShowPopup={setShowPopup}
       />
-      {showImageModal ? (
-        <ImagesModal
-          show={showImageModal}
-          setShow={setShowImageModal}
-          destination={currentMainDest}
-          setPopupMessage={setPopupMessage}
-          setPopupType={setPopupType}
-          setShowPopup={setShowPopup}
-        />
-      ) : null}
     </section>
   );
 }

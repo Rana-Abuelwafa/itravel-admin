@@ -1,6 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState, useEffect } from "react";
-import { GetTrip_Mains, SaveMainTrip } from "../../slices/tripSlice";
+import {
+  GetTrip_Mains,
+  SaveMainTrip,
+  GetTripCategories,
+} from "../../slices/tripSlice";
 import { GetDestination_Mains } from "../../slices/destinationSlice";
 import { Form, Row, Col, Button, FormCheck, Table } from "react-bootstrap";
 import {
@@ -37,6 +41,8 @@ function TripComp() {
   const [isUpdate, setIsUpdate] = useState(false);
   const [activeTrip, setActiveTrip] = useState({});
   const [isChecked, setIsChecked] = useState({});
+  const [dirty, setDirty] = useState(false);
+  const [touched, setTouched] = useState(false);
   const [formData, setFormData] = useState({
     id: 0,
     trip_default_name: "",
@@ -48,11 +54,18 @@ function TripComp() {
     show_in_slider: false,
     destination_id: 0,
     route: "",
+    trip_type: 0,
   });
-  const { TripsMain, loading, error } = useSelector((state) => state.trips);
+  const slugRegex = /^(?!-)(?!.*--)[a-zA-Z0-9-]+(?<!-)$/;
+  const isValidSlug =
+    formData.route.length === 0 || slugRegex.test(formData.route);
+  const { TripsMain, loading, error, TripCategories } = useSelector(
+    (state) => state.trips
+  );
   const { DestinationMain } = useSelector((state) => state.destinations);
 
   useEffect(() => {
+    dispatch(GetTripCategories());
     dispatch(GetDestination_Mains());
     dispatch(GetTrip_Mains(destination_id));
     return () => {};
@@ -77,32 +90,37 @@ function TripComp() {
       show_in_slider: false,
       destination_id: 0,
       route: "",
+      trip_type: 0,
     });
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(SaveMainTrip(formData)).then((result) => {
-      if (result.payload && result.payload.success) {
-        setShowPopup(false);
-        setFormData({
-          id: 0,
-          trip_default_name: "",
-          trip_code: "",
-          active: true,
-          trip_duration: "",
-          pickup: "",
-          show_in_top: false,
-          show_in_slider: false,
-          destination_id: 0,
-          route: "",
-        });
-        setIsUpdate(false);
-        dispatch(GetTrip_Mains(0));
-      } else {
-        setShowPopup(true);
-        setPopupMessage(result.payload.errors);
-      }
-    });
+    setTouched(true);
+    if (isValidSlug) {
+      dispatch(SaveMainTrip(formData)).then((result) => {
+        if (result.payload && result.payload.success) {
+          setShowPopup(false);
+          setFormData({
+            id: 0,
+            trip_default_name: "",
+            trip_code: "",
+            active: true,
+            trip_duration: "",
+            pickup: "",
+            show_in_top: false,
+            show_in_slider: false,
+            destination_id: 0,
+            route: "",
+            trip_type: 0,
+          });
+          setIsUpdate(false);
+          dispatch(GetTrip_Mains(0));
+        } else {
+          setShowPopup(true);
+          setPopupMessage(result.payload.errors);
+        }
+      });
+    }
   };
   const handleEdit = (trip) => {
     setIsUpdate(true);
@@ -118,6 +136,7 @@ function TripComp() {
       show_in_slider: trip.show_in_slider,
       destination_id: trip.destination_id,
       route: trip.route,
+      trip_type: trip.trip_type,
     });
   };
   const handleDelete = (trip, isDelete) => {
@@ -132,6 +151,7 @@ function TripComp() {
       show_in_slider: trip.show_in_slider,
       destination_id: trip.destination_id,
       route: trip.route,
+      trip_type: trip.trip_type,
     };
     dispatch(SaveMainTrip(data)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -143,6 +163,8 @@ function TripComp() {
       }
     });
   };
+  const shouldShowError =
+    (dirty || touched) && !isValidSlug && formData.route?.length > 0;
 
   return (
     <section className="layout_section">
@@ -161,7 +183,7 @@ function TripComp() {
           <input
             type="text"
             className="form-control ps-6"
-            placeholder="Search destination..."
+            placeholder="Search trip..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ paddingLeft: "30px" }}
@@ -179,7 +201,7 @@ function TripComp() {
       {filterExpanded && (
         <Form className="AddEdit_form form_crud" onSubmit={onSubmit}>
           <Row>
-            <Col md={4}>
+            <Col md={3}>
               {" "}
               <Form.Group className="mb-3">
                 {/* <Form.Label>Default Name</Form.Label> */}
@@ -194,7 +216,7 @@ function TripComp() {
                 />
               </Form.Group>
             </Col>
-            <Col md={4}>
+            <Col md={3}>
               {" "}
               <Form.Group className="mb-3">
                 {/* <Form.Label>Code</Form.Label> */}
@@ -210,7 +232,7 @@ function TripComp() {
               </Form.Group>
             </Col>
 
-            <Col md={4}>
+            <Col md={3}>
               {" "}
               <Form.Group>
                 {/* <Form.Label>Destination</Form.Label> */}
@@ -232,6 +254,28 @@ function TripComp() {
                 </Form.Control>
               </Form.Group>
             </Col>
+            <Col md={3}>
+              {" "}
+              <Form.Group>
+                {/* <Form.Label>Destination</Form.Label> */}
+                <Form.Control
+                  as="select"
+                  name="trip_type"
+                  onChange={handleInputChange}
+                  value={formData.trip_type}
+                  required
+                  className="formInput"
+                >
+                  <option value="">select category</option>
+                  {TripCategories &&
+                    TripCategories?.map((cat, index) => (
+                      <option key={index} value={cat.id}>
+                        {cat.type_code} - {cat.type_name}
+                      </option>
+                    ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
           </Row>
           <Row>
             <Col md={4}>
@@ -242,11 +286,28 @@ function TripComp() {
                   type="text"
                   placeholder="route"
                   name="route"
-                  onChange={handleInputChange}
+                  onChange={(e) => {
+                    if (!dirty) setDirty(true);
+                    handleInputChange(e);
+                  }}
                   required
                   value={formData.route}
                   className="formInput"
+                  onBlur={() => setTouched(true)}
+                  isInvalid={shouldShowError}
+                  isValid={
+                    formData.route?.length > 0 &&
+                    (touched || dirty) &&
+                    isValidSlug
+                  }
                 />
+                <Form.Control.Feedback
+                  type="invalid"
+                  style={{ fontSize: "12px" }}
+                >
+                  Only letters, numbers, and hyphens are allowed. No spaces,
+                  special characters, or leading/trailing hyphens.
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col md={2} xs={12}>
@@ -375,13 +436,14 @@ function TripComp() {
               <th>show in slider</th>
               <th>destination</th>
               <th>route</th>
+              <th>Category</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {TripsMain &&
               TripsMain.filter((item) =>
-                item.dest_default_name
+                item.trip_default_name
                   .toLowerCase()
                   .includes(searchTerm.toLowerCase())
               ).map((trip, index) => (
@@ -425,7 +487,12 @@ function TripComp() {
                   </td>
                   <td>{trip.dest_default_name}</td>
                   <td>{trip.route}</td>
-
+                  <td>
+                    {
+                      TripCategories.filter((f) => f.id == trip.trip_type)[0]
+                        ?.type_name
+                    }
+                  </td>
                   <td>
                     {" "}
                     {trip.active && (

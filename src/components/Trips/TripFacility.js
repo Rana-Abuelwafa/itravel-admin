@@ -18,14 +18,17 @@ function TripFacility() {
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [trip_id, setTrip_id] = useState(0);
+  const [trip_type, setTrip_Type] = useState(0);
   const [formData, setFormData] = useState({
     id: 0,
     trip_id: trip_id,
     facility_id: 0,
     selected: false,
+    trip_type: 0,
   });
   const handleTripChange = (id) => {
     setTrip_id(id);
+    setTrip_Type();
     dispatch(GetFacilityAllWithSelect(id));
   };
   const handleFacilityChange = (e, facility) => {
@@ -37,6 +40,7 @@ function TripFacility() {
       facility_id: facility.facility_id,
       selected: checked,
       active: true,
+      trip_type: 0,
     };
     dispatch(AssignFacilityToTrip(data)).then((result) => {
       if (result.payload && result.payload.success) {

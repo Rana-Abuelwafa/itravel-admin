@@ -299,10 +299,16 @@ function TripPickUps() {
                   <Accordion.Item eventKey={index}>
                     <Accordion.Header className="custom_accord">
                       <div className="d-flex justify-content-between w-100 align-items-center">
-                        <span>
+                        <div>
                           <FiMapPin className="mapIcon" />
-                          {row.pickup_default_name} - {row.duration}
-                        </span>
+                          {row.duration == null ? (
+                            <span>{row.pickup_default_name}</span>
+                          ) : (
+                            <span>
+                              {row.pickup_default_name} - {row.duration}
+                            </span>
+                          )}
+                        </div>
                         <div>
                           {" "}
                           <Button

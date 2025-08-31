@@ -30,8 +30,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import TripsSubMenu from "./TripsSubMenu";
 import DestinationSubMenu from "./DestinationSubMenu";
+import { allMenuItems, SubMenuItems } from "./menuItems";
+import * as FiIcons from "react-icons/fi";
+import * as FaIcons from "react-icons/fa";
+import * as IO5Icons from "react-icons/io5";
+const allIcons = { ...FaIcons, ...IO5Icons, ...FiIcons };
 export default function SideMenu() {
   const navigate = useNavigate();
+  const [Items, setItems] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [destOpenMenu, setDestOpenMenu] = useState(null);
@@ -48,23 +54,41 @@ export default function SideMenu() {
   const toggleDestSubmenu = (menu) => {
     setDestOpenMenu(destOpenMenu === menu ? null : menu);
   };
+  // useEffect(() => {
+  //   const userLocal = localStorage.getItem("user");
+  //   if (userLocal) {
+  //     const user = JSON.parse(userLocal);
+  //     if (user) {
+  //       setMyName(`${user.firstName} ${user.lastName}`);
+  //     }
+  //   }
+  // }, []);
   useEffect(() => {
     const userLocal = localStorage.getItem("user");
     if (userLocal) {
       const user = JSON.parse(userLocal);
       if (user) {
+        console.log("user.role ", user.role);
         setMyName(`${user.firstName} ${user.lastName}`);
+
+        // Filter menu items based on user role
+        const authorizedMenuItems = allMenuItems.filter((item) =>
+          item.roles.includes(user.role)
+        );
+
+        setItems(authorizedMenuItems || []);
+        // setItems(menuItems[user.role] || []);
       }
     }
   }, []);
-
+  console.log("authorizedMenuItems ", Items);
   return (
     <div className={`side-menu ${collapsed ? "collapsed" : ""}`}>
       {/* {!collapsed && <h3>Menu</h3>} */}
       {/* Top Bar with Logo and Toggle */}
       <div className="side-menu-topbar">
         {!collapsed && (
-          <img src="images/logo.png" alt="Logo" className="logo" />
+          <img src="/images/logo.png" alt="Logo" className="logo" />
         )}
         <button
           className="toggle-button"
@@ -78,7 +102,58 @@ export default function SideMenu() {
         </button>
       </div>
       <ul>
-        <li>
+        {Items &&
+          Items.map((item, index) => {
+            const IconComponent = allIcons[item.icon];
+            return item.withSub == false ? (
+              <li key={index}>
+                <Link to={item.path}>
+                  {IconComponent && <IconComponent className="menu-icon" />}{" "}
+                  <span className="menu-label">{item.title}</span>
+                </Link>
+              </li>
+            ) : (
+              <li>
+                <div
+                  className={
+                    item.id == "trips"
+                      ? `menu-item ${openMenu === item.id ? "open" : ""}`
+                      : `menu-item ${destOpenMenu === item.id ? "open" : ""}`
+                  }
+                >
+                  <Link to={item.path} className="left">
+                    {IconComponent && <IconComponent className="menu-icon" />}
+                    <span className="menu-label">{item.title}</span>
+                  </Link>
+                  {!collapsed && (
+                    <span
+                      className="arrow"
+                      onClick={() => toggleSubmenu(item.id)}
+                    >
+                      <FaChevronDown className="arrow" />
+                    </span>
+                  )}
+                </div>
+                <ul className={`submenu ${openMenu === item.id ? "open" : ""}`}>
+                  {SubMenuItems &&
+                    SubMenuItems.filter((sub) => sub.parentId == item.id).map(
+                      (sub, key) => (
+                        <li key={key}>
+                          <Link to={sub.path}>
+                            {IconComponent && (
+                              <IconComponent className="menu-icon" />
+                            )}
+                            <span className="menu-label">{sub.title}</span>
+                          </Link>
+                        </li>
+                      )
+                    )}
+                </ul>
+                {/* <TripsSubMenu openMenu={openMenu} /> */}
+              </li>
+            );
+          })}
+        {/* <li>
           <Link to="/dashboard">
             <FaChartSimple /> <span className="menu-label">Dashboard</span>
           </Link>
@@ -104,16 +179,7 @@ export default function SideMenu() {
           </div>
           <DestinationSubMenu openMenu={destOpenMenu} />
         </li>
-        {/* <li>
-          <Link to="/destinations">
-            <FaCity /> <span className="menu-label">Destinations</span>
-          </Link>
-        </li> */}
-        {/* <li>
-          <Link to="/trips">
-            <FaShip /> <span className="menu-label">Trips</span>
-          </Link>
-        </li> */}
+
         <li>
           <div className={`menu-item ${openMenu === "trips" ? "open" : ""}`}>
             <Link to="/trips" className="left">
@@ -123,66 +189,14 @@ export default function SideMenu() {
             {!collapsed && (
               <span className="arrow" onClick={() => toggleSubmenu("trips")}>
                 <FaChevronDown className="arrow" />
-                {/* {openMenu ? (
-                  <FaChevronUp className="arrow" />
-                ) : (
-                  <FaChevronDown className="arrow" />
-                )} */}
               </span>
             )}
           </div>
           <TripsSubMenu openMenu={openMenu} />
-          {/* <ul className={`submenu ${openMenu === "trips" ? "open" : ""}`}>
-            <li>
-              <Link to="/trips/translation">
-                <FaGlobe />
-                Translations
-              </Link>
-            </li>
-            <li>
-              <Link to="/trips/pickups">
-                <FaMapMarked />
-                Pick ups
-              </Link>
-            </li>
-          </ul> */}
         </li>
-        {/* <li>
-          <button
-            className={`menu-item ${openMenu === "trips" ? "open" : ""}`}
-            onClick={() => toggleSubmenu("trips")}
-          >
-            <FaShip />
-            <span className="menu-label">Trips</span>
-            {openMenu ? (
-              <FaChevronUp className="arrow" />
-            ) : (
-              <FaChevronDown className="arrow" />
-            )}
-          </button>
-          <ul className={`submenu ${openMenu === "trips" ? "open" : ""}`}>
-            <li>
-              <Link to="/trips/translation">
-                <FaGlobe />
-                Translations
-              </Link>
-            </li>
-            <li>
-              <Link to="/trips/pickups">
-                <FaMapMarked />
-                Pick ups
-              </Link>
-            </li>
-          </ul>
-        </li> */}
         <li>
           <Link to="/facility">
             <FaInfo /> <span className="menu-label">Facilities Setting</span>
-          </Link>
-        </li>
-        {/* <li>
-          <Link to="/transfer">
-            <FaCar /> <span className="menu-label">Transfer</span>
           </Link>
         </li> */}
       </ul>

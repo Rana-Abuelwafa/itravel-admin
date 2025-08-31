@@ -4,7 +4,7 @@ import "./styles/shared.scss";
 // src/App.js
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
-import Dashboard from "./components/Dashboard/dashboard";
+import Dashboard from "./components/Dashboard/Dashboard";
 import Trips from "./components/Trips/TripComp";
 import MainLayout from "./components/MainLayout";
 import DestinationComp from "./components/Destinations/DestinationComp";
