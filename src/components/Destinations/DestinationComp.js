@@ -4,8 +4,9 @@ import {
   GetDestinations,
   SaveMainDestination,
   SaveDestinationTranslations,
+  GetDestination_Mains,
 } from "../../slices/destinationSlice";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col, Button, FormCheck } from "react-bootstrap";
 import { Countries } from "../../helper/Countries";
 import {
   FaPlus,
@@ -15,15 +16,17 @@ import {
   FaGlobe,
   FaChevronDown,
   FaUpload,
+  FaCheck,
 } from "react-icons/fa";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
 import { Table } from "react-bootstrap";
 import TranslationModal from "./TranslationModal";
 import { FiRefreshCcw } from "react-icons/fi";
+import { FaX } from "react-icons/fa6";
 function DestinationComp() {
   const dispatch = useDispatch();
-  const { destinations, loading, error } = useSelector(
+  const { destinations, loading, error, DestinationMain } = useSelector(
     (state) => state.destinations
   );
   const [touched, setTouched] = useState(false);
@@ -45,6 +48,9 @@ function DestinationComp() {
     active: true,
     country_code: "",
     route: "",
+    parent_id: 0,
+    leaf: false,
+    order: 1,
   }); // Form state for save Destinations
 
   const slugRegex = /^(?!-)(?!.*--)[a-zA-Z0-9-]+(?<!-)$/;
@@ -61,7 +67,8 @@ function DestinationComp() {
   useEffect(() => {
     let data = { country_code: "", lang_code: "en", currency_code: "" };
     dispatch(GetDestinations(data));
-  }, []);
+    dispatch(GetDestination_Mains(false));
+  }, [dispatch]);
   const onSubmit = (e) => {
     e.preventDefault();
     setTouched(true);
@@ -77,6 +84,9 @@ function DestinationComp() {
             active: true,
             country_code: "",
             route: "",
+            parent_id: 0,
+            leaf: false,
+            order: 1,
           });
           let data = { country_code: "", lang_code: "en", currency_code: "" };
           dispatch(GetDestinations(data));
@@ -97,6 +107,9 @@ function DestinationComp() {
       active: true,
       country_code: "",
       route: "",
+      parent_id: 0,
+      leaf: false,
+      order: 1,
     });
     setIsUpdate(false);
   };
@@ -111,6 +124,9 @@ function DestinationComp() {
       active: true,
       country_code: dest.country_code,
       route: dest.route,
+      parent_id: dest.parent_id,
+      leaf: dest.leaf,
+      order: dest.order,
     });
   };
 
@@ -123,6 +139,9 @@ function DestinationComp() {
       active: false,
       country_code: dest.country_code,
       route: dest.route,
+      parent_id: dest.parent_id,
+      leaf: dest.leaf,
+      order: dest.order,
     };
     dispatch(SaveMainDestination(row)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -134,6 +153,9 @@ function DestinationComp() {
           active: true,
           country_code: "",
           route: "",
+          parent_id: 0,
+          leaf: false,
+          order: 1,
         });
         let data = { country_code: "", lang_code: "en", currency_code: "" };
         dispatch(GetDestinations(data));
@@ -198,7 +220,7 @@ function DestinationComp() {
         <th>Name</th>
         <th>Description</th>
         <th>Actions</th> */}
-        <td colSpan="5">
+        <td colSpan="8">
           <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex" style={{ width: "85%" }}>
               <div style={{ width: "15%" }}>
@@ -248,7 +270,7 @@ function DestinationComp() {
           </button>
         </td> */}
         {translation.lang_code != null ? (
-          <td colSpan="5">
+          <td colSpan="8">
             <div className="d-flex justify-content-between align-items-center">
               <div style={{ width: "85%", display: "flex" }}>
                 <div style={{ width: "15%" }}>{translation.lang_code}</div>
@@ -305,7 +327,7 @@ function DestinationComp() {
         <div className="dest_form">
           <Form onSubmit={onSubmit} className="mb-4 form_crud">
             <Row>
-              <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Col xs={12} md={4} className="mb-2 mb-md-0">
                 <Form.Group className="mb-3">
                   <Form.Label>Code</Form.Label>
                   <Form.Control
@@ -319,7 +341,7 @@ function DestinationComp() {
                   />
                 </Form.Group>
               </Col>
-              <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Col xs={12} md={4} className="mb-2 mb-md-0">
                 <Form.Group className="mb-3">
                   <Form.Label>Default Name</Form.Label>
                   <Form.Control
@@ -333,7 +355,7 @@ function DestinationComp() {
                   />
                 </Form.Group>
               </Col>
-              <Col xs={12} md={3} className="mb-2 mb-md-0">
+              <Col xs={12} md={4} className="mb-2 mb-md-0">
                 <Form.Group controlId="service">
                   <Form.Label>Country</Form.Label>
                   <Form.Control
@@ -354,7 +376,9 @@ function DestinationComp() {
                   </Form.Control>
                 </Form.Group>
               </Col>
-              <Col xs={12} md={3} className="mb-2 mb-md-0">
+            </Row>
+            <Row>
+              <Col xs={12} md={4} className="mb-2 mb-md-0">
                 <Form.Group className="mb-3">
                   <Form.Label>Route</Form.Label>
                   <Form.Control
@@ -386,6 +410,58 @@ function DestinationComp() {
                   {/* <Form.Control.Feedback type="valid">
                     Looks good!
                   </Form.Control.Feedback> */}
+                </Form.Group>
+              </Col>
+              <Col md={4}>
+                {" "}
+                <Form.Group>
+                  <Form.Label>Parent</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="parent_id"
+                    onChange={handleInputChange}
+                    value={formData.parent_id}
+                    className="formInput"
+                  >
+                    <option value="">select Parent</option>
+                    {DestinationMain &&
+                      DestinationMain?.map((dest, index) => (
+                        <option key={index} value={dest.id}>
+                          {dest.dest_code} - {dest.dest_default_name}
+                        </option>
+                      ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+              <Col md={2} xs={12}>
+                <Form.Label>Order</Form.Label>
+                <Form.Group className="mb-3">
+                  <Form.Control
+                    type="number"
+                    placeholder="order"
+                    name="order"
+                    onChange={handleInputChange}
+                    className="formInput"
+                    value={formData.order}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={2} xs={12}>
+                <Form.Group className="mb-3">
+                  <FormCheck
+                    className="checkbox_withmargin"
+                    type="checkbox"
+                    id="leaf"
+                    label="leaf"
+                    name="leaf"
+                    checked={formData.leaf}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        leaf: e.target.checked,
+                      });
+                    }}
+                  />
                 </Form.Group>
               </Col>
             </Row>
@@ -437,6 +513,9 @@ function DestinationComp() {
               <th>Name</th>
               <th>Country</th>
               <th>Route</th>
+              <th>Parent</th>
+              <th>Leaf</th>
+              <th>Order</th>
               <th></th>
             </tr>
           </thead>
@@ -469,6 +548,15 @@ function DestinationComp() {
                     <td>{dest.dest_default_name}</td>
                     <td>{dest.country_code}</td>
                     <td>{dest.route}</td>
+                    <td>{dest.parent_name}</td>
+                    <td>
+                      {dest.leaf ? (
+                        <FaCheck className="check_icon" />
+                      ) : (
+                        <FaX className="x_icon" />
+                      )}
+                    </td>
+                    <td>{dest.order}</td>
                     <td>
                       <div className="d-flex">
                         <button

@@ -1,32 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  FaCar,
-  FaCity,
-  FaChartSimple,
-  FaShip,
-  FaChevronRight,
-} from "react-icons/fa6";
-import {
-  FiHome,
-  FiSettings,
   FiUser,
   FiLogOut,
   FiChevronLeft,
   FiChevronRight,
   FiSearch,
-  FiDollarSign,
-  FiLayers,
 } from "react-icons/fi";
 import "./SideMenu.scss";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaGlobe,
-  FaInfo,
-  FaMap,
-  FaMapMarked,
-} from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TripsSubMenu from "./TripsSubMenu";
 import DestinationSubMenu from "./DestinationSubMenu";
@@ -34,8 +16,9 @@ import { allMenuItems, SubMenuItems } from "./menuItems";
 import * as FiIcons from "react-icons/fi";
 import * as FaIcons from "react-icons/fa";
 import * as IO5Icons from "react-icons/io5";
-const allIcons = { ...FaIcons, ...IO5Icons, ...FiIcons };
-export default function SideMenu() {
+import * as Fa6Icons from "react-icons/fa6";
+const allIcons = { ...FaIcons, ...IO5Icons, ...FiIcons, ...Fa6Icons };
+export default function SideMenu({ ChangeLayoutWidth }) {
   const navigate = useNavigate();
   const [Items, setItems] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
@@ -45,7 +28,8 @@ export default function SideMenu() {
   const logOut = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    navigate("/");
+    // navigate("/");
+    window.location.href = "/";
   };
   const toggleSubmenu = (menu) => {
     setOpenMenu(openMenu === menu ? null : menu);
@@ -68,7 +52,6 @@ export default function SideMenu() {
     if (userLocal) {
       const user = JSON.parse(userLocal);
       if (user) {
-        console.log("user.role ", user.role);
         setMyName(`${user.firstName} ${user.lastName}`);
 
         // Filter menu items based on user role
@@ -81,7 +64,6 @@ export default function SideMenu() {
       }
     }
   }, []);
-  console.log("authorizedMenuItems ", Items);
   return (
     <div className={`side-menu ${collapsed ? "collapsed" : ""}`}>
       {/* {!collapsed && <h3>Menu</h3>} */}
@@ -92,7 +74,10 @@ export default function SideMenu() {
         )}
         <button
           className="toggle-button"
-          onClick={() => setCollapsed((prev) => !prev)}
+          onClick={() => {
+            setCollapsed((prev) => !prev);
+            ChangeLayoutWidth((prev) => !prev);
+          }}
         >
           {!collapsed ? (
             <FiChevronLeft size={20} />
@@ -113,7 +98,7 @@ export default function SideMenu() {
                 </Link>
               </li>
             ) : (
-              <li>
+              <li key={index}>
                 <div
                   className={
                     item.id == "trips"
@@ -137,16 +122,19 @@ export default function SideMenu() {
                 <ul className={`submenu ${openMenu === item.id ? "open" : ""}`}>
                   {SubMenuItems &&
                     SubMenuItems.filter((sub) => sub.parentId == item.id).map(
-                      (sub, key) => (
-                        <li key={key}>
-                          <Link to={sub.path}>
-                            {IconComponent && (
-                              <IconComponent className="menu-icon" />
-                            )}
-                            <span className="menu-label">{sub.title}</span>
-                          </Link>
-                        </li>
-                      )
+                      (sub, key) => {
+                        const SubIconComponent = allIcons[sub.icon];
+                        return (
+                          <li key={key}>
+                            <Link to={sub.path}>
+                              {SubIconComponent && (
+                                <SubIconComponent className="menu-icon" />
+                              )}
+                              <span className="menu-label">{sub.title}</span>
+                            </Link>
+                          </li>
+                        );
+                      }
                     )}
                 </ul>
                 {/* <TripsSubMenu openMenu={openMenu} /> */}

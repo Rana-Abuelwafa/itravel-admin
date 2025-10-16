@@ -44,10 +44,11 @@ function TripPickUps() {
     delete: false,
   });
   const { loading, error, TripPickups } = useSelector((state) => state.trips);
-  const handleTripChange = (id) => {
-    setTrip_id(Number(id));
-    let data = { trip_id: Number(id), trip_type: 1 };
+  const handleTripChange = (trip) => {
+    setTrip_id(Number(trip?.id));
+    let data = { trip_id: Number(trip?.id), trip_type: 1 };
     dispatch(GetPickupsAllForTrip(data));
+    resetForm();
   };
   const handleInputChange = (e) => {
     setFormData({
@@ -240,7 +241,7 @@ function TripPickUps() {
                     </Form.Group>
                   </Col>
                   <Col md={2} xs={12}>
-                    <Form.Group className="mb-3" controlId="packageName">
+                    <Form.Group className="mb-3">
                       <Form.Control
                         type="number"
                         placeholder="order"

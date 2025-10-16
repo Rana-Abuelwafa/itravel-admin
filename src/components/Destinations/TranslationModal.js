@@ -5,7 +5,7 @@ import {
   SaveDestinationTranslations,
   GetDestinations,
 } from "../../slices/destinationSlice";
-
+import LangSelect from "../Shared/MainSetting/LangSelect";
 const TranslationModal = ({
   show,
   setShow,
@@ -17,7 +17,6 @@ const TranslationModal = ({
 }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.destinations); // Get translation status from Redux store
-
   // Handle translation submission
   const handleTranslationSubmit = async (e) => {
     e.preventDefault();
@@ -58,8 +57,9 @@ const TranslationModal = ({
                 onChange={handleTranslationChange}
                 requireds
               >
-                <option value="en">EN-English</option>
-                <option value="de">DE-Dutch</option>
+                <LangSelect />
+                {/* <option value="en">EN-English</option>
+                <option value="de">DE-Dutch</option> */}
               </Form.Select>
             </Form.Group>
 

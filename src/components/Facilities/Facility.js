@@ -11,7 +11,15 @@ import {
   FaUndo,
 } from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
-import { Button, Form, Col, Row, Table, Accordion } from "react-bootstrap";
+import {
+  Button,
+  Form,
+  Col,
+  Row,
+  Table,
+  Accordion,
+  FormCheck,
+} from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
@@ -21,6 +29,11 @@ import {
   SaveFacilityTranslation,
 } from "../../slices/facilitySlice";
 import FacilityTranslationModal from "./FacilityTranslationModal";
+import CurrencySelect from "../Shared/MainSetting/CurrencySelect";
+const priceTypes = [
+  { id: 1, name: "Per Pax" },
+  { id: 2, name: "Per Unit" },
+];
 function Facility() {
   const dispatch = useDispatch();
   const { facilities, loading, error } = useSelector((state) => state.facility);
@@ -37,6 +50,11 @@ function Facility() {
     facility_default_name: "",
     active: true,
     id: 0,
+    extra_price: 0,
+    is_extra: false,
+    currency_code: "",
+    pricing_type: 1,
+    is_obligatory: false,
   });
   const handleInputChange = (e) => {
     setFormData({
@@ -46,7 +64,6 @@ function Facility() {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log("formData ", formData);
     dispatch(SaveMainFacility(formData)).then((result) => {
       if (result.payload && result.payload.success) {
         setShowPopup(false);
@@ -55,6 +72,11 @@ function Facility() {
           facility_default_name: "",
           active: true,
           id: 0,
+          extra_price: 0,
+          is_extra: false,
+          currency_code: "",
+          pricing_type: 1,
+          is_obligatory: false,
         });
         setIsUpdate(false);
         dispatch(GetFacilityWithTranslation());
@@ -72,6 +94,11 @@ function Facility() {
       facility_default_name: "",
       active: true,
       id: 0,
+      extra_price: 0,
+      is_extra: false,
+      currency_code: "",
+      pricing_type: 1,
+      is_obligatory: false,
     });
   };
   useEffect(() => {
@@ -87,6 +114,11 @@ function Facility() {
       facility_default_name: fac.facility_default_name,
       active: fac.active,
       id: fac.facility_id,
+      extra_price: fac.extra_price,
+      is_extra: fac.is_extra,
+      currency_code: fac.currency_code,
+      pricing_type: fac.pricing_type,
+      is_obligatory: fac.is_obligatory,
     });
   };
 
@@ -96,6 +128,11 @@ function Facility() {
       facility_default_name: fac.facility_default_name,
       active: !fac.active,
       id: fac.facility_id,
+      extra_price: fac.extra_price,
+      is_extra: fac.is_extra,
+      currency_code: fac.currency_code,
+      pricing_type: fac.pricing_type,
+      is_obligatory: fac.is_obligatory,
     };
     dispatch(SaveMainFacility(data)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -215,9 +252,106 @@ function Facility() {
                   />
                 </Form.Group>
               </Col>
+
+              <Col md={4} xs={12}>
+                <Form.Group className="mb-3">
+                  <FormCheck
+                    type="checkbox"
+                    id="is_extra"
+                    label="is extra"
+                    name="is_extra"
+                    className="checkbox_withmargin"
+                    checked={formData.is_extra}
+                    onChange={(e) => {
+                      setFormData({
+                        ...formData,
+                        is_extra: e.target.checked,
+                      });
+                    }}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Row>
+              {formData.is_extra ? (
+                <>
+                  <Col md={3} xs={12}>
+                    <Form.Group>
+                      <Form.Label>Price</Form.Label>
+                      <Form.Control
+                        type="number"
+                        className="form-control"
+                        placeholder="Enter price"
+                        value={formData.extra_price}
+                        name="extra_price"
+                        onChange={handleInputChange}
+                        required
+                      ></Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md={3} xs={12}>
+                    <Form.Group>
+                      <Form.Label>Currency</Form.Label>
+                      <Form.Control
+                        as="select"
+                        name="currency_code"
+                        value={formData.currency_code}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value={""}>select Currency</option>
+                        <CurrencySelect />
+                        {/* {currencies.map((currency, index) => (
+                          <option key={index} value={currency.code}>
+                            {currency.code}
+                          </option>
+                        ))} */}
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md={3}>
+                    <Form.Group>
+                      <Form.Label>Pricing Type</Form.Label>
+                      <Form.Control
+                        as="select"
+                        name="pricing_type"
+                        value={formData.pricing_type}
+                        onChange={handleInputChange}
+                        required
+                      >
+                        <option value={""}>select</option>
+                        {priceTypes.map((type, index) => (
+                          <option key={index} value={type.id}>
+                            {type.name}
+                          </option>
+                        ))}
+                      </Form.Control>
+                    </Form.Group>
+                  </Col>
+                  <Col md={3} xs={12}>
+                    <Form.Group className="mb-3">
+                      <FormCheck
+                        type="checkbox"
+                        id="is_obligatory"
+                        label="is obligatory"
+                        name="is_obligatory"
+                        className="checkbox_withmargin"
+                        checked={formData.is_obligatory}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            is_obligatory: e.target.checked,
+                          });
+                        }}
+                      />
+                    </Form.Group>
+                  </Col>
+                </>
+              ) : null}
+
               {isUpdate ? (
                 <>
-                  <Col xs={12} md={2}>
+                  <Col xs={12} md={{ span: 2, offset: 8 }}>
                     {" "}
                     <Button
                       className="darkBlue-Btn FullWidthBtn"
@@ -238,7 +372,10 @@ function Facility() {
                   </Col>
                 </>
               ) : (
-                <Col xs={12} md={4}>
+                <Col
+                  xs={12}
+                  md={formData.is_extra ? 4 : { span: 4, offset: 8 }}
+                >
                   <Button
                     variant="primary"
                     type="submit"

@@ -5,6 +5,7 @@ import {
   SaveTripPickupsTranslations,
   GetPickupsAllForTrip,
 } from "../../slices/tripSlice";
+import LangSelect from "../Shared/MainSetting/LangSelect";
 
 const PickupTranslationModal = ({
   show,
@@ -69,8 +70,9 @@ const PickupTranslationModal = ({
                 onChange={handleTranslationChange}
                 requireds
               >
-                <option value="en">EN-English</option>
-                <option value="de">DE-Dutch</option>
+                <LangSelect />
+                {/* <option value="en">EN-English</option>
+                <option value="de">DE-Dutch</option> */}
               </Form.Select>
             </Form.Group>
 

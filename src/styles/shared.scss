@@ -13,7 +13,7 @@
 .secondryBtn {
   background-color: $secondary-color !important;
   border-color: $secondary-color !important;
-  color: $primary-color !important;
+  color: white !important;
 }
 .transBtn {
   background-color: transparent !important;
@@ -60,6 +60,12 @@
   //   background-color: white !important;
   //   box-shadow: unset !important;
   // }
+}
+.checkbox_withmargin {
+  margin-top: 40px;
+}
+.form-label {
+  font-size: 13px !important;
 }
 .formLabel {
   font-size: 18px;
@@ -176,10 +182,34 @@ a:active {
 .layout_section {
   padding: 20px;
   height: 100vh;
+  max-height: 100vh;
+  display: block;
+}
+.FullWidthLayout {
+  max-width: calc(100vw - 80px); /* maximum width = full viewport width */
+  width: calc(100vw - 80px); /* normally take full parent width */
+}
+.SmallWidthLayout {
+  max-width: calc(100vw - 230px); /* maximum width = full viewport width */
+  width: calc(100vw - 230px); /* normally take full parent width */
+}
+.layout {
+  // padding: 20px;
+  height: 100vh;
+  max-height: 100vh;
+  display: block;
+  // max-width: 1000px;
+  overflow-y: scroll;
+  overflow-x: auto; /* enable ITravel scroll if content is wider */
+  white-space: nowrap; /* keep content in one line (optional) */
 }
 .header_title {
   margin-bottom: 20px;
   flex: 1;
+
+  h2 {
+    text-decoration: underline;
+  }
 }
 
 .form_crud {
@@ -293,11 +323,13 @@ a:active {
     background-color: $purple-color !important;
     color: white;
     text-align: center;
+    white-space: nowrap;
   }
 
   .table td {
     text-align: center;
     border-top: 1px solid #ddd;
+    white-space: nowrap;
   }
   .inactive-row {
     background-color: lightcoral !important;
@@ -373,4 +405,55 @@ a:active {
 }
 .divider {
   margin: 30px 0;
+}
+
+//search select trip & destination
+.search-select {
+  position: relative;
+  margin-bottom: 20px;
+  width: 50%; // adjust as needed
+  //margin: 0 20px;
+  .form-control {
+    display: inline-block;
+  }
+  input {
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+  }
+  .copy_btn {
+    background-color: $primary-color;
+    width: 40px;
+    height: 40px;
+    color: white;
+    margin: 0 10px;
+  }
+  .results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-top: 2px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    .dropdown-item {
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+      svg {
+        margin-right: 3px;
+      }
+    }
+  }
 }

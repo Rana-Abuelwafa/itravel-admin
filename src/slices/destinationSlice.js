@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+// import axios from "axios";
+import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
@@ -25,10 +26,15 @@ const getAuthHeaders = (isForm) => {
 //Get Destination drown down
 export const GetDestination_Mains = createAsyncThunk(
   "destinations/GetDestination_Mains",
-  async (_, { rejectWithValue }) => {
+  async (leaf, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetDestinationMain`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetDestinationMain?leaf=` + leaf,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetDestinationMain?leaf=` + leaf,
         {},
         getAuthHeaders(false)
       );
@@ -43,8 +49,13 @@ export const GetDestinations = createAsyncThunk(
   "destinations/GetDestinations",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetDestinationWithTranslations`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetDestinationWithTranslations`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetDestinationWithTranslations`,
         formData,
         getAuthHeaders(false)
       );
@@ -60,8 +71,13 @@ export const SaveMainDestination = createAsyncThunk(
   "destinations/SaveMainDestination",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveMainDestination`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveMainDestination`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveMainDestination`,
         formData,
         getAuthHeaders(false)
       );
@@ -77,8 +93,13 @@ export const saveDestinationImage = createAsyncThunk(
   "destinations/saveDestinationImage",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/saveDestinationImage`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/saveDestinationImage`,
+      //   formData,
+      //   getAuthHeaders(true)
+      // );
+      const response = await api.post(
+        `/saveDestinationImage`,
         formData,
         getAuthHeaders(true)
       );
@@ -93,8 +114,13 @@ export const SaveDestinationTranslations = createAsyncThunk(
   "destinations/SaveDestinationTranslations",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveDestinationTranslations`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveDestinationTranslations`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveDestinationTranslations`,
         formData,
         getAuthHeaders(false)
       );
@@ -108,8 +134,13 @@ export const GetImgsByDestination = createAsyncThunk(
   "destinations/GetImgsByDestination",
   async (destination_id, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetImgsByDestination?destination_id=` + destination_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetImgsByDestination?destination_id=` + destination_id,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetImgsByDestination?destination_id=` + destination_id,
         {},
         getAuthHeaders(false)
       );
@@ -125,8 +156,13 @@ export const UpdateDestinationImage = createAsyncThunk(
   "destinations/UpdateDestinationImage",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/UpdateDestinationImage`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/UpdateDestinationImage`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/UpdateDestinationImage`,
         formData,
         getAuthHeaders(false)
       );
@@ -230,21 +266,21 @@ const destinationSlice = createSlice({
       .addCase(UpdateDestinationImage.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-      .addMatcher(
-        (action) => action.type.endsWith("/pending"),
-        (state) => {
-          //state.status = "loading";
-          state.loading = true;
-        }
-      )
-      .addMatcher(
-        (action) => action.type.endsWith("/rejected"),
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      );
+      });
+    // .addMatcher(
+    //   (action) => action.type.endsWith("/pending"),
+    //   (state) => {
+    //     //state.status = "loading";
+    //     state.loading = true;
+    //   }
+    // )
+    // .addMatcher(
+    //   (action) => action.type.endsWith("/rejected"),
+    //   (state, action) => {
+    //     state.loading = false;
+    //     state.error = action.payload;
+    //   }
+    // );
   },
 });
 

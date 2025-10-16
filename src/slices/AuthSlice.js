@@ -20,7 +20,6 @@ const initialState = {
 };
 // Helper to extract error message from different response formats
 const getErrorMessage = (error) => {
-  console.log("error.response?.data ", error.response?.data);
   if (error.response?.data?.success === false) {
     return error.response.data.errors || "Operation failed";
   }
@@ -97,6 +96,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
     },
   },
   extraReducers: (builder) => {
@@ -168,7 +168,6 @@ const authSlice = createSlice({
       .addMatcher(
         (action) => action.type.endsWith("/rejected"),
         (state, action) => {
-          console.log("reject. ", action.payload);
           //state.status = "failed";
           state.error = action.payload;
           state.message = action.payload;
@@ -179,5 +178,5 @@ const authSlice = createSlice({
   },
 });
 
-//export const { GetQuestions } = registerSlice.actions;
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

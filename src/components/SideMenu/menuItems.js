@@ -1,17 +1,17 @@
-export const MenuItems = {
-  Admin: [
-    // { path: "/dashboard", title: "Dashboard", icon: "FiHome" },
-    { path: "/home", title: "home", icon: "FiHome" },
-    { path: "/users", title: "Users", icon: "FiUsers" },
-    { path: "/questions", title: "Questions", icon: "FiHelpCircle" },
-    { path: "/features", title: "Features", icon: "FiLayers" },
-    { path: "/services", title: "Services", icon: "FiSettings" },
-    { path: "/packages", title: "Packages", icon: "IoLogoFirebase" },
-    { path: "/pricing", title: "Pricing", icon: "FiDollarSign" },
-    { path: "/invoices", title: "Invoices", icon: "FaFileInvoice" },
-  ],
-  accountant: [{ path: "/invoices", title: "Invoices", icon: "FaFileInvoice" }],
-};
+// export const MenuItems = {
+//   Admin: [
+//     // { path: "/dashboard", title: "Dashboard", icon: "FiHome" },
+//     { path: "/home", title: "home", icon: "FiHome" },
+//     { path: "/users", title: "Users", icon: "FiUsers" },
+//     { path: "/questions", title: "Questions", icon: "FiHelpCircle" },
+//     { path: "/features", title: "Features", icon: "FiLayers" },
+//     { path: "/services", title: "Services", icon: "FiSettings" },
+//     { path: "/packages", title: "Packages", icon: "IoLogoFirebase" },
+//     { path: "/pricing", title: "Pricing", icon: "FiDollarSign" },
+//     { path: "/invoices", title: "Invoices", icon: "FaFileInvoice" },
+//   ],
+//   accountant: [{ path: "/invoices", title: "Invoices", icon: "FaFileInvoice" }],
+// };
 
 export const allMenuItems = [
   {
@@ -46,6 +46,22 @@ export const allMenuItems = [
     roles: ["Admin", "manager", "sales"],
     withSub: false,
   },
+  {
+    id: "Booking",
+    title: "Booking",
+    icon: "FaTicketAlt",
+    path: "/Booking",
+    roles: ["Admin", "manager", "sales"],
+    withSub: false,
+  },
+  // {
+  //   id: "transfer",
+  //   title: "Transfer Category",
+  //   icon: "FaCar",
+  //   path: "/transfer",
+  //   roles: ["Admin", "manager", "sales"],
+  //   withSub: false,
+  // },
 ];
 
 export const SubMenuItems = [

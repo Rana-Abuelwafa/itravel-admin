@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaStar, FaRegStar } from "react-icons/fa";
-
+import * as Fa6Icons from "react-icons/fa6";
 import * as FiIcons from "react-icons/fi";
 import * as FaIcons from "react-icons/fa";
 import * as IO5Icons from "react-icons/io5";
 import {} from "react-icons/fa";
 import "./Dashboard.scss";
 import { allMenuItems } from "../SideMenu/menuItems";
-const allIcons = { ...FaIcons, ...IO5Icons, ...FiIcons };
+const allIcons = { ...FaIcons, ...IO5Icons, ...FiIcons, ...Fa6Icons };
 const Dashboard = ({ userRole = "admin" }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");

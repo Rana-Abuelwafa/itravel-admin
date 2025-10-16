@@ -17,10 +17,20 @@ function TripImages() {
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [trip_id, setTrip_id] = useState(0);
+  const [trip_route, setTrip_route] = useState(0);
   const [images, setImages] = useState([]);
   // const [currentIndex, setCurrentIndex] = useState(null);
   // const [defaultImageId, setDefaultImageId] = useState(null);
   const { loading, error, TripImgs } = useSelector((state) => state.trips);
+
+  const RenameFileFn = (file) => {
+    // ✅ Generate custom filename: triproute_img_<random>.ext
+    const ext = file.name.split(".").pop();
+    const randomId = Math.random().toString(36).substring(2, 10); // random string
+    // const safeTripName = rou.replace(/\s+/g, "_").toLowerCase(); // remove spaces
+    const newFileName = `${trip_route}_img_${randomId}.${ext}`;
+    return newFileName;
+  };
 
   // Handle file input
   const handleUpload = (e) => {
@@ -29,13 +39,16 @@ function TripImages() {
       id: URL.createObjectURL(file),
       file,
     }));
-    //setImages((prev) => [...prev, ...newImages]);
+
     const formData = new FormData();
     formData.append("id", 0);
     formData.append("trip_id", trip_id);
     formData.append("is_default", false);
-    files.forEach((img) => {
-      formData.append("imgs", img); // "Files" matches API param name
+    files.forEach((file) => {
+      const newFileName = RenameFileFn(file);
+      console.log("newFileName ", newFileName);
+      const renamedFile = new File([file], newFileName, { type: file.type });
+      formData.append("imgs", renamedFile); // "Files" matches API param name
     });
     dispatch(SaveTripImage(formData)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -51,6 +64,7 @@ function TripImages() {
         setPopupMessage(result.payload.errors);
       }
     });
+    e.target.value = "";
   };
   // Remove image
   const handleRemove = (img) => {
@@ -110,10 +124,11 @@ function TripImages() {
   //   }
   // }, [currentIndex, images.length]);
 
-  const handleTripChange = (id) => {
-    setTrip_id(id);
+  const handleTripChange = (trip) => {
+    setTrip_id(trip?.id);
+    setTrip_route(trip?.route);
     // dispatch(GetImgsByTrip(id));
-    dispatch(GetImgsByTrip(id)).then((result) => {
+    dispatch(GetImgsByTrip(trip?.id)).then((result) => {
       if (result.payload) {
         setImages(result.payload);
       }

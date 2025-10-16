@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
@@ -28,8 +29,13 @@ export const GetFacilityWithTranslation = createAsyncThunk(
   "facility/GetFacilityWithTranslation",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetFacilityWithTranslation`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetFacilityWithTranslation`,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetFacilityWithTranslation`,
         {},
         getAuthHeaders(false)
       );
@@ -44,8 +50,13 @@ export const SaveFacilityTranslation = createAsyncThunk(
   "facility/SaveFacilityTranslation",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveFacilityTranslation`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveFacilityTranslation`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveFacilityTranslation`,
         formData,
         getAuthHeaders(false)
       );
@@ -61,8 +72,13 @@ export const SaveMainFacility = createAsyncThunk(
   "facility/SaveMainFacility",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveMainFacility`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveMainFacility`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveMainFacility`,
         formData,
         getAuthHeaders(false)
       );
@@ -78,8 +94,13 @@ export const GetFacilityAllWithSelect = createAsyncThunk(
   "facility/GetFacilityAllWithSelect",
   async (trip_id, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetFacilityAllWithSelect?trip_id=` + trip_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetFacilityAllWithSelect?trip_id=` + trip_id,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetFacilityAllWithSelect?trip_id=` + trip_id,
         {},
         getAuthHeaders(false)
       );
@@ -95,8 +116,13 @@ export const AssignFacilityToTrip = createAsyncThunk(
   "facility/AssignFacilityToTrip",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/AssignFacilityToTrip`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/AssignFacilityToTrip`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/AssignFacilityToTrip`,
         formData,
         getAuthHeaders(false)
       );

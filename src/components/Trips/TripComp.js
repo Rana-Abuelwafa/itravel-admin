@@ -4,9 +4,18 @@ import {
   GetTrip_Mains,
   SaveMainTrip,
   GetTripCategories,
+  GetTransfer_Categories,
 } from "../../slices/tripSlice";
 import { GetDestination_Mains } from "../../slices/destinationSlice";
-import { Form, Row, Col, Button, FormCheck, Table } from "react-bootstrap";
+import {
+  Form,
+  Row,
+  Col,
+  Button,
+  FormCheck,
+  Table,
+  InputGroup,
+} from "react-bootstrap";
 import {
   FaPlus,
   FaTrash,
@@ -21,6 +30,7 @@ import {
   FaTimes,
   FaUndo,
   FaDollarSign,
+  FaEyeSlash,
 } from "react-icons/fa";
 import PopUp from "../Shared/popup/PopUp";
 import LoadingPage from "../Loader/LoadingPage";
@@ -29,10 +39,12 @@ import { FiRefreshCcw } from "react-icons/fi";
 import "./trips.scss";
 import { FiDelete } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+
 function TripComp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState(""); // State for search functionality
+  const [SearchCategory, setSearchCategory] = useState("");
   const [destination_id, setDestinationId] = useState(0);
   const [showPopup, setShowPopup] = useState(false); // State for popup visibility
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
@@ -55,19 +67,24 @@ function TripComp() {
     destination_id: 0,
     route: "",
     trip_type: 0,
+    transfer_category_id: 0,
+    release_days: 1,
+    trip_order: 0,
+    is_comm_soon: false,
+    trip_code_auto: "",
   });
   const slugRegex = /^(?!-)(?!.*--)[a-zA-Z0-9-]+(?<!-)$/;
   const isValidSlug =
-    formData.route.length === 0 || slugRegex.test(formData.route);
-  const { TripsMain, loading, error, TripCategories } = useSelector(
-    (state) => state.trips
-  );
+    formData.route?.length === 0 || slugRegex.test(formData.route);
+  const { TripsMain, loading, error, TripCategories, TransferCategories } =
+    useSelector((state) => state.trips);
   const { DestinationMain } = useSelector((state) => state.destinations);
 
   useEffect(() => {
     dispatch(GetTripCategories());
-    dispatch(GetDestination_Mains());
-    dispatch(GetTrip_Mains(destination_id));
+    dispatch(GetDestination_Mains(true));
+    let data = { destination_id: destination_id, trip_type: 0 };
+    dispatch(GetTrip_Mains(data));
     return () => {};
   }, [dispatch]);
 
@@ -91,6 +108,11 @@ function TripComp() {
       destination_id: 0,
       route: "",
       trip_type: 0,
+      transfer_category_id: 0,
+      release_days: 1,
+      trip_order: 0,
+      is_comm_soon: false,
+      trip_code_auto: "",
     });
   };
   const onSubmit = (e) => {
@@ -112,9 +134,15 @@ function TripComp() {
             destination_id: 0,
             route: "",
             trip_type: 0,
+            transfer_category_id: 0,
+            release_days: 1,
+            trip_order: 0,
+            is_comm_soon: false,
+            trip_code_auto: "",
           });
           setIsUpdate(false);
-          dispatch(GetTrip_Mains(0));
+          let data = { destination_id: 0, trip_type: 0 };
+          dispatch(GetTrip_Mains(data));
         } else {
           setShowPopup(true);
           setPopupMessage(result.payload.errors);
@@ -137,6 +165,11 @@ function TripComp() {
       destination_id: trip.destination_id,
       route: trip.route,
       trip_type: trip.trip_type,
+      transfer_category_id: trip.transfer_category_id,
+      release_days: trip.release_days,
+      trip_order: trip.trip_order,
+      is_comm_soon: trip.is_comm_soon,
+      trip_code_auto: trip.trip_code_auto,
     });
   };
   const handleDelete = (trip, isDelete) => {
@@ -152,11 +185,17 @@ function TripComp() {
       destination_id: trip.destination_id,
       route: trip.route,
       trip_type: trip.trip_type,
+      transfer_category_id: trip.transfer_category_id,
+      release_days: trip.release_days,
+      trip_order: trip.trip_order,
+      is_comm_soon: trip.is_comm_soon,
+      trip_code_auto: trip.trip_code_auto,
     };
     dispatch(SaveMainTrip(data)).then((result) => {
       if (result.payload && result.payload.success) {
         setShowPopup(false);
-        dispatch(GetTrip_Mains(0));
+        let data = { destination_id: 0, trip_type: 0 };
+        dispatch(GetTrip_Mains(data));
       } else {
         setShowPopup(true);
         setPopupMessage(result.payload.errors);
@@ -165,7 +204,6 @@ function TripComp() {
   };
   const shouldShowError =
     (dirty || touched) && !isValidSlug && formData.route?.length > 0;
-
   return (
     <section className="layout_section">
       <div className="d-flex justify-content-between align-items-center header_title">
@@ -204,7 +242,7 @@ function TripComp() {
             <Col md={3}>
               {" "}
               <Form.Group className="mb-3">
-                {/* <Form.Label>Default Name</Form.Label> */}
+                <Form.Label>Default Name</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="default name"
@@ -219,7 +257,7 @@ function TripComp() {
             <Col md={3}>
               {" "}
               <Form.Group className="mb-3">
-                {/* <Form.Label>Code</Form.Label> */}
+                <Form.Label>Code</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="Code"
@@ -235,7 +273,7 @@ function TripComp() {
             <Col md={3}>
               {" "}
               <Form.Group>
-                {/* <Form.Label>Destination</Form.Label> */}
+                <Form.Label>Destination</Form.Label>
                 <Form.Control
                   as="select"
                   name="destination_id"
@@ -257,7 +295,7 @@ function TripComp() {
             <Col md={3}>
               {" "}
               <Form.Group>
-                {/* <Form.Label>Destination</Form.Label> */}
+                <Form.Label>Trip Category</Form.Label>
                 <Form.Control
                   as="select"
                   name="trip_type"
@@ -278,10 +316,34 @@ function TripComp() {
             </Col>
           </Row>
           <Row>
-            <Col md={4}>
+            {/* {formData.trip_type == 2 ? (
+              <Col md={2}>
+                {" "}
+                <Form.Group>
+                  <Form.Label>Transfer Category</Form.Label>
+                  <Form.Control
+                    as="select"
+                    name="transfer_category_id"
+                    onChange={handleInputChange}
+                    value={formData.transfer_category_id}
+                    required
+                    className="formInput"
+                  >
+                    <option value="">select transfer</option>
+                    {TransferCategories &&
+                      TransferCategories?.map((ts, index) => (
+                        <option key={index} value={ts.id}>
+                          {ts.category_code} - {ts.category_name}
+                        </option>
+                      ))}
+                  </Form.Control>
+                </Form.Group>
+              </Col>
+            ) : null} */}
+            <Col md={3}>
               {" "}
               <Form.Group className="mb-3">
-                {/* <Form.Label>Code</Form.Label> */}
+                <Form.Label>Route</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="route"
@@ -310,8 +372,9 @@ function TripComp() {
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
-            <Col md={2} xs={12}>
+            <Col md={3} xs={12}>
               <Form.Group className="mb-3" controlId="packageName">
+                <Form.Label>Duration</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="duration"
@@ -323,8 +386,9 @@ function TripComp() {
                 />
               </Form.Group>
             </Col>
-            <Col md={2} xs={12}>
+            <Col md={3} xs={12}>
               <Form.Group className="mb-3" controlId="packageName">
+                <Form.Label>PickUp</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="pickup"
@@ -335,14 +399,43 @@ function TripComp() {
                 />
               </Form.Group>
             </Col>
-
+            <Col md={3}>
+              <Form.Group>
+                <Form.Label>release days</Form.Label>
+                <Form.Control
+                  type="number"
+                  className="form-control"
+                  placeholder="Enter value"
+                  value={formData.release_days}
+                  name="release_days"
+                  onChange={handleInputChange}
+                ></Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
+            {" "}
             <Col md={2} xs={12}>
-              <Form.Group className="mb-3" controlId="packageName">
+              <Form.Label>Order</Form.Label>
+              <Form.Group className="mb-3">
+                <Form.Control
+                  type="number"
+                  placeholder="order"
+                  name="trip_order"
+                  onChange={handleInputChange}
+                  className="formInput"
+                  value={formData.trip_order}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={2} xs={12}>
+              <Form.Group className="mb-3">
                 <FormCheck
                   type="checkbox"
                   id="show_in_top"
                   label="show in top"
                   name="show_in_top"
+                  className="checkbox_withmargin"
                   checked={formData.show_in_top}
                   onChange={(e) => {
                     setFormData({
@@ -354,17 +447,36 @@ function TripComp() {
               </Form.Group>
             </Col>
             <Col md={2} xs={12}>
-              <Form.Group className="mb-3" controlId="packageName">
+              <Form.Group className="mb-3">
                 <FormCheck
                   type="checkbox"
                   id="show_in_slider"
                   label="show in slider"
                   name="show_in_slider"
+                  className="checkbox_withmargin"
                   checked={formData.show_in_slider}
                   onChange={(e) => {
                     setFormData({
                       ...formData,
                       show_in_slider: e.target.checked,
+                    });
+                  }}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={2} xs={12}>
+              <Form.Group className="mb-3">
+                <FormCheck
+                  type="checkbox"
+                  id="is_comm_soon"
+                  label="comming soon"
+                  name="is_comm_soon"
+                  className="checkbox_withmargin"
+                  checked={formData.is_comm_soon}
+                  onChange={(e) => {
+                    setFormData({
+                      ...formData,
+                      is_comm_soon: e.target.checked,
                     });
                   }}
                 />
@@ -432,20 +544,51 @@ function TripComp() {
               <th>default name</th>
               <th>duration</th>
               <th>pickup</th>
-              <th>show in top</th>
-              <th>show in slider</th>
+              <th>in top</th>
+              <th>in slider</th>
+              <th>Soon</th>
               <th>destination</th>
               <th>route</th>
-              <th>Category</th>
+              <th>
+                Category
+                {/* <InputGroup className="filterInput"> */}
+                {/* <Form.Label>Destination</Form.Label> */}
+                <Form.Control
+                  as="select"
+                  name="trip_type"
+                  onChange={(e) => setSearchCategory(e.target.value)}
+                  value={SearchCategory}
+                  required
+                  className="filterInput"
+                >
+                  <option value="">filter...</option>
+                  {TripCategories &&
+                    TripCategories?.map((cat, index) => (
+                      <option key={index} value={cat.id}>
+                        {cat.type_name}
+                      </option>
+                    ))}
+                </Form.Control>
+                {/* <Button onClick={()=> setSearchCategory()}>
+                    <FaSearch />
+                  </Button> */}
+                {/* </InputGroup> */}
+              </th>
+              <th>Release Days</th>
+              <th>Order</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {TripsMain &&
-              TripsMain.filter((item) =>
-                item.trip_default_name
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
+              TripsMain.filter(
+                (item) =>
+                  item.trip_default_name
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()) &&
+                  item.trip_type
+                    ?.toString()
+                    .includes(SearchCategory?.toString())
               ).map((trip, index) => (
                 <tr
                   key={index}
@@ -485,6 +628,13 @@ function TripComp() {
                       <FaX className="x_icon" />
                     )}
                   </td>
+                  <td>
+                    {trip.is_comm_soon ? (
+                      <FaCheck className="check_icon" />
+                    ) : (
+                      <FaX className="x_icon" />
+                    )}
+                  </td>
                   <td>{trip.dest_default_name}</td>
                   <td>{trip.route}</td>
                   <td>
@@ -493,6 +643,17 @@ function TripComp() {
                         ?.type_name
                     }
                   </td>
+                  <td>{trip.release_days}</td>
+                  <td>{trip.trip_order}</td>
+                  {/* {trip.trip_type == 2 ? (
+                    <td>
+                      {
+                        TransferCategories.filter(
+                          (f) => f.id == trip.transfer_category_id
+                        )[0]?.category_name
+                      }
+                    </td>
+                  ) : null} */}
                   <td>
                     {" "}
                     {trip.active && (
@@ -508,9 +669,10 @@ function TripComp() {
                       <button
                         className="btn btn-sm red-btn action_btn"
                         onClick={() => handleDelete(trip, true)}
-                        title="delete"
+                        title="Disactive"
                       >
-                        <FaTrash />
+                        {/* <FaTrash /> */}
+                        <FaEyeSlash />
                       </button>
                     ) : (
                       <button

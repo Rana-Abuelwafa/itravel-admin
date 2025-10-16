@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  GetDestination_Mains,
   GetImgsByDestination,
   UpdateDestinationImage,
   saveDestinationImage,
@@ -11,32 +10,41 @@ import { useSelector, useDispatch } from "react-redux";
 import LoadingPage from "../Loader/LoadingPage";
 import PopUp from "../Shared/popup/PopUp";
 import ImageGallery from "../Shared/ImageGallery/ImageGallery";
+import DestinationDropDown from "./DestinationDropDown";
 function DestinationImages() {
   const [destination_id, setdestination_id] = useState(0);
+  const [destination_route, setdestination_route] = useState(0);
   const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false); // State for popup visibility
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [images, setImages] = useState([]);
-  const { DestinationMain, loading } = useSelector(
-    (state) => state.destinations
-  );
+  const { loading } = useSelector((state) => state.destinations);
 
-  useEffect(() => {
-    dispatch(GetDestination_Mains());
-    return () => {};
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(GetDestination_Mains(false));
+  //   return () => {};
+  // }, [dispatch]);
 
-  const handleInputChange = (e) => {
-    const id = e.target.value;
-    setdestination_id(id);
-    dispatch(GetImgsByDestination(id)).then((result) => {
+  const handleInputChange = (dest) => {
+    // const id = e.target.value;
+    setdestination_id(dest?.id);
+    setdestination_route(dest?.route);
+    dispatch(GetImgsByDestination(dest?.id)).then((result) => {
       if (result.payload) {
         setImages(result.payload);
       }
     });
   };
 
+  const RenameFileFn = (file) => {
+    // ✅ Generate custom filename: triproute_img_<random>.ext
+    const ext = file.name.split(".").pop();
+    const randomId = Math.random().toString(36).substring(2, 10); // random string
+    // const safeTripName = rou.replace(/\s+/g, "_").toLowerCase(); // remove spaces
+    const newFileName = `${destination_route}_img_${randomId}.${ext}`;
+    return newFileName;
+  };
   // Handle file input
   const handleUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -49,8 +57,14 @@ function DestinationImages() {
     formData.append("id", 0);
     formData.append("destination_id", destination_id);
     formData.append("is_default", false);
-    files.forEach((img) => {
-      formData.append("imgs", img); // "Files" matches API param name
+    // files.forEach((img) => {
+    //   formData.append("imgs", img); // "Files" matches API param name
+    // });
+    files.forEach((file) => {
+      const newFileName = RenameFileFn(file);
+      console.log("newFileName ", newFileName);
+      const renamedFile = new File([file], newFileName, { type: file.type });
+      formData.append("imgs", renamedFile); // "Files" matches API param name
     });
     dispatch(saveDestinationImage(formData)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -66,6 +80,7 @@ function DestinationImages() {
         setPopupMessage(result.payload.errors);
       }
     });
+    e.target.value = "";
   };
   // Remove image
   const handleRemove = (img) => {
@@ -118,15 +133,14 @@ function DestinationImages() {
       }
     });
   };
-  console.log("DestinationMain ", DestinationMain);
   return (
     <section className="layout_section">
       {" "}
-      <div className="d-flex justify-content-between align-items-center header_title">
+      <div className="header_title">
         <h2 className="mb-4 page-title">Destination Images</h2>
-        <div className="position-relative">
+        <DestinationDropDown handleChange={handleInputChange} />
+        {/* <div className="position-relative">
           <Form.Group>
-            {/* <Form.Label>Destination</Form.Label> */}
             <Form.Control
               as="select"
               name="destination_id"
@@ -144,7 +158,7 @@ function DestinationImages() {
                 ))}
             </Form.Control>
           </Form.Group>
-        </div>
+        </div> */}
       </div>
       <hr className="divider" />
       <div className="result_list">
@@ -156,11 +170,15 @@ function DestinationImages() {
                 type="file"
                 multiple
                 accept="image/*"
-                id="fileUpload"
+                id={"fileUpload_" + destination_id}
                 onChange={handleUpload}
+                //onChange={() => console.log("eeeeeee+" + destination_id)}
                 hidden
               />
-              <label htmlFor="fileUpload" className="upload-btn">
+              <label
+                htmlFor={"fileUpload_" + destination_id}
+                className="upload-btn"
+              >
                 <FaPlus /> Upload Images
               </label>
             </div>

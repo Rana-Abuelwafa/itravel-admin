@@ -18,18 +18,15 @@ function TripFacility() {
   const [popupMessage, setPopupMessage] = useState(""); // State for popup message
   const [popupType, setPopupType] = useState("alert"); // State for popup type
   const [trip_id, setTrip_id] = useState(0);
-  const [trip_type, setTrip_Type] = useState(0);
   const [formData, setFormData] = useState({
     id: 0,
     trip_id: trip_id,
     facility_id: 0,
     selected: false,
-    trip_type: 0,
   });
-  const handleTripChange = (id) => {
-    setTrip_id(id);
-    setTrip_Type();
-    dispatch(GetFacilityAllWithSelect(id));
+  const handleTripChange = (trip) => {
+    setTrip_id(trip?.id);
+    dispatch(GetFacilityAllWithSelect(trip?.id));
   };
   const handleFacilityChange = (e, facility) => {
     console.log(e.target.checked);
@@ -40,7 +37,6 @@ function TripFacility() {
       facility_id: facility.facility_id,
       selected: checked,
       active: true,
-      trip_type: 0,
     };
     dispatch(AssignFacilityToTrip(data)).then((result) => {
       if (result.payload && result.payload.success) {
@@ -56,31 +52,37 @@ function TripFacility() {
     <section className="layout_section">
       <TripHeader title="Trip Facility" handleTripChange={handleTripChange} />
       <hr className="divider" />
-      <div className="result_list">
-        <Form>
-          <Row>
-            {" "}
-            {TripFacility && TripFacility.length > 0 ? (
-              TripFacility.map((fac, index) => (
-                <Col md={6} xs={12}>
-                  <Form.Check
-                    type={"checkbox"}
-                    id={`check-${index}`}
-                    label={fac.facility_default_name}
-                    className="fac_check"
-                    checked={fac.selected}
-                    onChange={(e) => handleFacilityChange(e, fac)}
-                  />
-                </Col>
-              ))
-            ) : (
-              <div className="centerSection">
-                <p>No data</p>
-              </div>
-            )}
-          </Row>
-        </Form>
-      </div>
+      {trip_id > 0 ? (
+        <div className="result_list">
+          <Form>
+            <Row>
+              {" "}
+              {TripFacility && TripFacility.length > 0 ? (
+                TripFacility.map((fac, index) => (
+                  <Col md={6} xs={12} key={index}>
+                    <Form.Check
+                      type={"checkbox"}
+                      id={`check-${index}`}
+                      label={fac.facility_default_name}
+                      className="fac_check"
+                      checked={fac.selected}
+                      onChange={(e) => handleFacilityChange(e, fac)}
+                    />
+                  </Col>
+                ))
+              ) : (
+                <div className="centerSection">
+                  <p>No data</p>
+                </div>
+              )}
+            </Row>
+          </Form>
+        </div>
+      ) : (
+        <div className="centerSection">
+          <p>No data</p>
+        </div>
+      )}
     </section>
   );
 }

@@ -84,7 +84,7 @@ function Login() {
 
         <p className="SubTitle">
           Check out more easily and access your tickets on any device with your{" "}
-          <strong>I Travel Pro </strong> account.
+          <strong>ITravel-Admin</strong> account.
         </p>
         <Form onSubmit={signin} noValidate>
           <Row>

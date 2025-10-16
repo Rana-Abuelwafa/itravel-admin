@@ -21,18 +21,18 @@ function ImageGallery({ images, handleRemove, handleSetDefault }) {
   };
 
   // ✅ Keyboard navigation
-  useEffect(() => {
-    if (currentIndex !== null) {
-      const handleKeyDown = (e) => {
-        if (e.key === "Escape") closeModal();
-        if (e.key === "ArrowLeft") prevImage();
-        if (e.key === "ArrowRight") nextImage();
-      };
+  // useEffect(() => {
+  //   if (currentIndex !== null) {
+  //     const handleKeyDown = (e) => {
+  //       if (e.key === "Escape") closeModal();
+  //       if (e.key === "ArrowLeft") prevImage();
+  //       if (e.key === "ArrowRight") nextImage();
+  //     };
 
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [currentIndex, images.length]);
+  //     window.addEventListener("keydown", handleKeyDown);
+  //     return () => window.removeEventListener("keydown", handleKeyDown);
+  //   }
+  // }, [currentIndex, images.length]);
   return (
     <div>
       {/* Gallery Grid */}

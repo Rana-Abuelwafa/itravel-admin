@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
@@ -26,16 +27,28 @@ const getAuthHeaders = (isForm) => {
 //Get main trips list
 export const GetTrip_Mains = createAsyncThunk(
   "trips/GetTrip_Mains",
-  async (destination_id, { rejectWithValue }) => {
+  async (data, thunkAPI) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetTrip_Mains?destination_id=` + destination_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetTrip_Mains?destination_id=` +
+      //     data.destination_id +
+      //     "&&trip_type=" +
+      //     data.trip_type,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetTrip_Mains?destination_id=` +
+          data.destination_id +
+          "&&trip_type=" +
+          data.trip_type,
         {},
         getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      // return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -45,8 +58,13 @@ export const GetTripCategories = createAsyncThunk(
   "trips/GetTripCategories",
   async (destination_id, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetTripCategories`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetTripCategories`,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetTripCategories`,
         {},
         getAuthHeaders(false)
       );
@@ -61,8 +79,13 @@ export const SaveMainTrip = createAsyncThunk(
   "trips/SaveMainTrip",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveMainTrip`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveMainTrip`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveMainTrip`,
         formData,
         getAuthHeaders(false)
       );
@@ -78,8 +101,13 @@ export const GetTripTranslationGrp = createAsyncThunk(
   "trips/GetTripTranslationGrp",
   async (trip_id, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetTripTranslationGrp?trip_id=` + trip_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetTripTranslationGrp?trip_id=` + trip_id,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetTripTranslationGrp?trip_id=` + trip_id,
         {},
         getAuthHeaders(false)
       );
@@ -89,19 +117,43 @@ export const GetTripTranslationGrp = createAsyncThunk(
     }
   }
 );
-//Get trips transaltions list grouping by lang
+//Get trips prices list grouping by lang
 export const GetTrip_Prices = createAsyncThunk(
   "trips/GetTrip_Prices",
-  async (trip_id, { rejectWithValue }) => {
+  async (trip_id, thunkAPI) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetTrip_Prices?trip_id=` + trip_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetTrip_Prices?trip_id=` + trip_id,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetTrip_Prices?trip_id=` + trip_id,
         {},
         getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      // return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//get child policy for trip
+export const GetTrip_ChildPolicy = createAsyncThunk(
+  "trips/GetTrip_ChildPolicy",
+  async (trip_id, thunkAPI) => {
+    try {
+      const response = await api.post(
+        `/GetTrip_ChildPolicy?trip_id=` + trip_id,
+        {},
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      // return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
     }
   }
 );
@@ -110,8 +162,13 @@ export const SaveTripTranslation = createAsyncThunk(
   "trips/SaveTripTranslation",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveTripTranslation`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveTripTranslation`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveTripTranslation`,
         formData,
         getAuthHeaders(false)
       );
@@ -127,8 +184,30 @@ export const SaveTripPrices = createAsyncThunk(
   "trips/SaveTripPrices",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveTripPrices`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveTripPrices`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveTripPrices`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//save trip child policy
+export const SaveTripChildPolicy = createAsyncThunk(
+  "trips/SaveTripChildPolicy",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.post(
+        `/SaveTripChildPolicy`,
         formData,
         getAuthHeaders(false)
       );
@@ -144,8 +223,13 @@ export const SaveMainTripPickups = createAsyncThunk(
   "trips/SaveMainTripPickups",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveMainTripPickups`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveMainTripPickups`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveMainTripPickups`,
         formData,
         getAuthHeaders(false)
       );
@@ -161,8 +245,13 @@ export const SaveTripPickupsTranslations = createAsyncThunk(
   "trips/SaveTripPickupsTranslations",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveTripPickupsTranslations`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveTripPickupsTranslations`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveTripPickupsTranslations`,
         formData,
         getAuthHeaders(false)
       );
@@ -177,8 +266,13 @@ export const GetPickupsAllForTrip = createAsyncThunk(
   "trips/GetPickupsAllForTrip",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetPickupsAllForTrip`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetPickupsAllForTrip`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetPickupsAllForTrip`,
         formData,
         getAuthHeaders(false)
       );
@@ -194,8 +288,13 @@ export const GetImgsByTrip = createAsyncThunk(
   "trips/GetImgsByTrip",
   async (trip_id, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/GetImgsByTrip?trip_id=` + trip_id,
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetImgsByTrip?trip_id=` + trip_id,
+      //   {},
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetImgsByTrip?trip_id=` + trip_id,
         {},
         getAuthHeaders(false)
       );
@@ -211,8 +310,13 @@ export const SaveTripImage = createAsyncThunk(
   "trips/SaveTripImage",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/SaveTripImage`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveTripImage`,
+      //   formData,
+      //   getAuthHeaders(true)
+      // );
+      const response = await api.post(
+        `/SaveTripImage`,
         formData,
         getAuthHeaders(true)
       );
@@ -223,13 +327,61 @@ export const SaveTripImage = createAsyncThunk(
   }
 );
 
-//save trip main
+//update trip image
 export const UpdateTripImage = createAsyncThunk(
   "trips/UpdateTripImage",
   async (formData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${BASE_URL}/UpdateTripImage`,
+      // const response = await axios.post(
+      //   `${BASE_URL}/UpdateTripImage`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/UpdateTripImage`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+//save transfer Category
+export const SaveTransferCategory = createAsyncThunk(
+  "trips/SaveTransferCategory",
+  async (formData, { rejectWithValue }) => {
+    try {
+      // const response = await axios.post(
+      //   `${BASE_URL}/SaveTransferCategory`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/SaveTransferCategory`,
+        formData,
+        getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+//get transfer categories list
+export const GetTransfer_Categories = createAsyncThunk(
+  "trips/GetTransfer_Categories",
+  async (formData, { rejectWithValue }) => {
+    try {
+      // const response = await axios.post(
+      //   `${BASE_URL}/GetTransfer_Categories`,
+      //   formData,
+      //   getAuthHeaders(false)
+      // );
+      const response = await api.post(
+        `/GetTransfer_Categories`,
         formData,
         getAuthHeaders(false)
       );
@@ -251,6 +403,8 @@ const tripSlice = createSlice({
     TripPickups: [],
     TripImgs: [],
     TripCategories: [],
+    TransferCategories: [],
+    ChildPolicyList: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -382,21 +536,66 @@ const tripSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-
-      .addMatcher(
-        (action) => action.type.endsWith("/pending"),
-        (state) => {
-          //state.status = "loading";
-          state.loading = true;
-        }
-      )
-      .addMatcher(
-        (action) => action.type.endsWith("/rejected"),
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      );
+      .addCase(SaveTransferCategory.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveTransferCategory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveTransferCategory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetTransfer_Categories.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTransfer_Categories.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.TransferCategories = action.payload;
+      })
+      .addCase(GetTransfer_Categories.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(SaveTripChildPolicy.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(SaveTripChildPolicy.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(SaveTripChildPolicy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(GetTrip_ChildPolicy.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTrip_ChildPolicy.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.ChildPolicyList = action.payload;
+      })
+      .addCase(GetTrip_ChildPolicy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+    // .addMatcher(
+    //   (action) => action.type.endsWith("/pending"),
+    //   (state) => {
+    //     //state.status = "loading";
+    //     state.loading = true;
+    //   }
+    // )
+    // .addMatcher(
+    //   (action) => action.type.endsWith("/rejected"),
+    //   (state, action) => {
+    //     state.loading = false;
+    //     state.error = action.payload;
+    //   }
+    // );
   },
 });
 
