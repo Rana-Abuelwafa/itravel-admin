@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 const BASE_URL_AUTH = process.env.REACT_APP_AUTH_API_URL;
+const authApi = axios.create({
+  baseURL: BASE_URL_AUTH,
+  withCredentials: true, // important for cookie refresh token
+});
 const NonAuthHeaders = () => {
   let lang = localStorage.getItem("lang");
   return {
@@ -39,8 +43,8 @@ const getErrorMessage = (error) => {
 export const ConfirmOTP = createAsyncThunk(
   "ConfirmOTP",
   async (payload, thunkAPI) => {
-    var response = await axios
-      .post(BASE_URL_AUTH + "/ConfirmOTP", payload)
+    var response = await authApi
+      .post("/ConfirmOTP", payload)
       .then((res) => {
         return res.data;
       })
@@ -55,8 +59,8 @@ export const ConfirmOTP = createAsyncThunk(
 export const RegisterUser = createAsyncThunk(
   "auth/register",
   async (data, thunkAPI) => {
-    var response = await axios
-      .post(BASE_URL_AUTH + data.path, data.payload, {
+    var response = await authApi
+      .post(data.path, data.payload, {
         headers: NonAuthHeaders(),
       })
       .then((res) => {
@@ -74,8 +78,8 @@ export const RegisterUser = createAsyncThunk(
 export const LoginUser = createAsyncThunk(
   "auth/login",
   async (data, thunkAPI) => {
-    var response = await axios
-      .post(BASE_URL_AUTH + data.path, data.payload, {
+    var response = await authApi
+      .post(data.path, data.payload, {
         headers: NonAuthHeaders(),
       })
       .then((res) => {

@@ -1,35 +1,111 @@
-// src/api/axios.js
 import axios from "axios";
 //import { store } from "../redux/store"; // your redux store
 import { logout } from "../slices/AuthSlice"; // your auth slice action
 // import { useNavigate } from "react-router-dom";
 import { navigate } from "../helper/navigate";
+import {
+  getAccessToken,
+  setAccessToken,
+  clearAccessToken,
+} from "../helper/TokenHelper";
 const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL_AUTH = process.env.REACT_APP_AUTH_API_URL;
 // create instance
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true, // important for cookie refresh token
 });
+const authApi = axios.create({
+  baseURL: BASE_URL_AUTH,
+  withCredentials: true, // important for cookie refresh token
+});
+// Add request interceptor
+api.interceptors.request.use(
+  async (config) => {
+    const token = getAccessToken();
+    config.headers["Content-Type"] = "application/json";
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    } else {
+      //window.location.href = "/login";
+    }
 
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+let isRefreshing = false;
+let failedQueue = [];
+// When multiple API requests fail at the same time (access token expired),
+// we don’t want to refresh the token multiple times — just once,
+// and queue the others until it’s done.
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) prom.reject(error);
+    else prom.resolve(token);
+  });
+  failedQueue = [];
+};
 // Add response interceptor
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // dispatch logout
-      //store.dispatch(logout());
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      // redirect to login
-      navigate("/login");
-      //window.location.href = "/login"; // or use navigate if inside a component
+  async (error) => {
+    const originalRequest = error.config;
+    console.log("originalRequest.url ", originalRequest.url);
+    // Skip refresh for login/register endpoints
+    if (
+      originalRequest.url.includes("/api/LoginUser") ||
+      originalRequest.url.includes("/api/RegisterUser") ||
+      originalRequest.url.includes("/api/ConfirmOTP") ||
+      originalRequest.url.includes("/api/LoginGmail") ||
+      originalRequest.url.includes("/api/ExternalRegister")
+    ) {
+      return Promise.reject(error);
     }
-    if (!error.response) {
-      console.error("Network error or server not reachable");
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      // redirect to login
-      navigate("/login");
+    console.log("error.response?.status", error.response?.status);
+    // Handle unauthorized
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Wait for refresh to finish, then retry
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            originalRequest.headers["Authorization"] = "Bearer " + token;
+            return api(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        console.log("start get refresh");
+        // token refresh
+        const refreshResponse = await authApi.post("/refresh");
+        console.log("refreshResponse ", refreshResponse);
+        const newToken = refreshResponse?.data?.user?.accessToken;
+
+        setAccessToken(newToken);
+        processQueue(null, newToken);
+
+        // Retry original request
+        originalRequest.headers["Authorization"] = "Bearer " + newToken;
+        return api(originalRequest);
+      } catch (refreshError) {
+        // 🚨 Refresh failed → clear tokens and redirect
+        processQueue(refreshError, null);
+        clearAccessToken();
+        // window.location.href = "/login";
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
     }
+
+    // Other errors
     return Promise.reject(error);
   }
 );
