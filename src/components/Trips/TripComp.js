@@ -534,54 +534,54 @@ function TripComp() {
           </Row> */}
         </Form>
       )}
-
+      <hr />
       <div className="result_list">
         {" "}
-        <Table responsive>
-          <thead>
-            <tr className="main_row">
-              <th>code</th>
-              <th>default name</th>
-              <th>duration</th>
-              <th>pickup</th>
-              <th>in top</th>
-              <th>in slider</th>
-              <th>Soon</th>
-              <th>destination</th>
-              <th>route</th>
-              <th>
-                Category
-                {/* <InputGroup className="filterInput"> */}
-                {/* <Form.Label>Destination</Form.Label> */}
-                <Form.Control
-                  as="select"
-                  name="trip_type"
-                  onChange={(e) => setSearchCategory(e.target.value)}
-                  value={SearchCategory}
-                  required
-                  className="filterInput"
-                >
-                  <option value="">filter...</option>
-                  {TripCategories &&
-                    TripCategories?.map((cat, index) => (
-                      <option key={index} value={cat.id}>
-                        {cat.type_name}
-                      </option>
-                    ))}
-                </Form.Control>
-                {/* <Button onClick={()=> setSearchCategory()}>
+        {TripsMain && TripsMain.length > 0 ? (
+          <Table responsive>
+            <thead>
+              <tr className="main_row">
+                <th>code</th>
+                <th>default name</th>
+                <th>duration</th>
+                <th>pickup</th>
+                <th>in top</th>
+                <th>in slider</th>
+                <th>Soon</th>
+                <th>destination</th>
+                <th>route</th>
+                <th>
+                  Category
+                  {/* <InputGroup className="filterInput"> */}
+                  {/* <Form.Label>Destination</Form.Label> */}
+                  <Form.Control
+                    as="select"
+                    name="trip_type"
+                    onChange={(e) => setSearchCategory(e.target.value)}
+                    value={SearchCategory}
+                    required
+                    className="filterInput"
+                  >
+                    <option value="">filter...</option>
+                    {TripCategories &&
+                      TripCategories?.map((cat, index) => (
+                        <option key={index} value={cat.id}>
+                          {cat.type_name}
+                        </option>
+                      ))}
+                  </Form.Control>
+                  {/* <Button onClick={()=> setSearchCategory()}>
                     <FaSearch />
                   </Button> */}
-                {/* </InputGroup> */}
-              </th>
-              <th>Release Days</th>
-              <th>Order</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {TripsMain &&
-              TripsMain.filter(
+                  {/* </InputGroup> */}
+                </th>
+                <th>Release Days</th>
+                <th>Order</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {TripsMain.filter(
                 (item) =>
                   item.trip_default_name
                     .toLowerCase()
@@ -700,8 +700,13 @@ function TripComp() {
                   </td>
                 </tr>
               ))}
-          </tbody>
-        </Table>
+            </tbody>
+          </Table>
+        ) : (
+          <div className="centerSection">
+            <p>No data</p>
+          </div>
+        )}
       </div>
       {loading ? <LoadingPage /> : null}
       <PopUp

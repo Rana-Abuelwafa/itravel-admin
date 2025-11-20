@@ -3,25 +3,25 @@ import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
-const getAuthHeaders = (isForm) => {
-  let accessToken = localStorage.getItem("token");
-  if (isForm) {
-    return {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
-        "Accept-Language": "en",
-      },
-    };
-  }
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Accept-Language": "en",
-    },
-  };
-};
+// const getAuthHeaders = (isForm) => {
+//   let accessToken = localStorage.getItem("token");
+//   if (isForm) {
+//     return {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "multipart/form-data",
+//         "Accept-Language": "en",
+//       },
+//     };
+//   }
+//   return {
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//       "Content-Type": "application/json",
+//       "Accept-Language": "en",
+//     },
+//   };
+// };
 
 //Get Booking All
 export const GetAllBooking = createAsyncThunk(
@@ -30,8 +30,8 @@ export const GetAllBooking = createAsyncThunk(
     try {
       const response = await api.post(
         `/GetAllBooking`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {

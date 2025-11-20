@@ -3,7 +3,7 @@ import axios from "axios";
 const BASE_URL_AUTH = process.env.REACT_APP_AUTH_API_URL;
 const authApi = axios.create({
   baseURL: BASE_URL_AUTH,
-  withCredentials: true, // important for cookie refresh token
+  // withCredentials: true, // important for cookie refresh token
 });
 const NonAuthHeaders = () => {
   let lang = localStorage.getItem("lang");

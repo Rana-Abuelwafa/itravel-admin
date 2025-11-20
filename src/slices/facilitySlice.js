@@ -1,27 +1,27 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/axios";
-const BASE_URL = process.env.REACT_APP_API_URL;
+// const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
-const getAuthHeaders = (isForm) => {
-  let accessToken = localStorage.getItem("token");
-  if (isForm) {
-    return {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
-        "Accept-Language": "en",
-      },
-    };
-  }
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Accept-Language": "en",
-    },
-  };
-};
+// const getAuthHeaders = (isForm) => {
+//   let accessToken = localStorage.getItem("token");
+//   if (isForm) {
+//     return {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "multipart/form-data",
+//         "Accept-Language": "en",
+//       },
+//     };
+//   }
+//   return {
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//       "Content-Type": "application/json",
+//       "Accept-Language": "en",
+//     },
+//   };
+// };
 
 //Get Facility with translation
 export const GetFacilityWithTranslation = createAsyncThunk(
@@ -34,9 +34,9 @@ export const GetFacilityWithTranslation = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetFacilityWithTranslation`,
-        {},
-        getAuthHeaders(false)
+        `/GetFacilityWithTranslation`
+        // {},
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -56,8 +56,8 @@ export const SaveFacilityTranslation = createAsyncThunk(
       // );
       const response = await api.post(
         `/SaveFacilityTranslation`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -78,8 +78,8 @@ export const SaveMainFacility = createAsyncThunk(
       // );
       const response = await api.post(
         `/SaveMainFacility`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -99,9 +99,9 @@ export const GetFacilityAllWithSelect = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetFacilityAllWithSelect?trip_id=` + trip_id,
-        {},
-        getAuthHeaders(false)
+        `/GetFacilityAllWithSelect?trip_id=` + trip_id
+        // {},
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -122,8 +122,8 @@ export const AssignFacilityToTrip = createAsyncThunk(
       // );
       const response = await api.post(
         `/AssignFacilityToTrip`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {

@@ -3,25 +3,25 @@ import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
-const getAuthHeaders = (isForm) => {
-  let accessToken = localStorage.getItem("token");
-  if (isForm) {
-    return {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
-        "Accept-Language": "en",
-      },
-    };
-  }
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Accept-Language": "en",
-    },
-  };
-};
+// const getAuthHeaders = (isForm) => {
+//   let accessToken = localStorage.getItem("token");
+//   if (isForm) {
+//     return {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "multipart/form-data",
+//         "Accept-Language": "en",
+//       },
+//     };
+//   }
+//   return {
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//       "Content-Type": "application/json",
+//       "Accept-Language": "en",
+//     },
+//   };
+// };
 //Get Destination drown down
 export const GetDestination_Mains = createAsyncThunk(
   "destinations/GetDestination_Mains",
@@ -33,9 +33,8 @@ export const GetDestination_Mains = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetDestinationMain?leaf=` + leaf,
-        {},
-        getAuthHeaders(false)
+        `/GetDestinationMain?leaf=` + leaf
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -55,8 +54,8 @@ export const GetDestinations = createAsyncThunk(
       // );
       const response = await api.post(
         `/GetDestinationWithTranslations`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -77,8 +76,8 @@ export const SaveMainDestination = createAsyncThunk(
       // );
       const response = await api.post(
         `/SaveMainDestination`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -100,7 +99,8 @@ export const saveDestinationImage = createAsyncThunk(
       const response = await api.post(
         `/saveDestinationImage`,
         formData,
-        getAuthHeaders(true)
+        { isFormData: true }
+        //getAuthHeaders(true)
       );
       return response.data;
     } catch (error) {
@@ -120,8 +120,8 @@ export const SaveDestinationTranslations = createAsyncThunk(
       // );
       const response = await api.post(
         `/SaveDestinationTranslations`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -139,9 +139,9 @@ export const GetImgsByDestination = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetImgsByDestination?destination_id=` + destination_id,
-        {},
-        getAuthHeaders(false)
+        `/GetImgsByDestination?destination_id=` + destination_id
+        // {},
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -162,8 +162,8 @@ export const UpdateDestinationImage = createAsyncThunk(
       // );
       const response = await api.post(
         `/UpdateDestinationImage`,
-        formData,
-        getAuthHeaders(false)
+        formData
+        //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {

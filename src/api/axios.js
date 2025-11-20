@@ -13,17 +13,22 @@ const BASE_URL_AUTH = process.env.REACT_APP_AUTH_API_URL;
 // create instance
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // important for cookie refresh token
-});
-const authApi = axios.create({
-  baseURL: BASE_URL_AUTH,
-  withCredentials: true, // important for cookie refresh token
+  //withCredentials: true, // important for cookie refresh token
 });
 // Add request interceptor
 api.interceptors.request.use(
   async (config) => {
-    const token = getAccessToken();
-    config.headers["Content-Type"] = "application/json";
+    // const token = getAccessToken();
+    let lang = localStorage.getItem("lang");
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = user?.accessToken;
+    //config.headers["Content-Type"] = "application/json";
+    config.headers["Accept-Language"] = lang;
+    if (config.isFormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
+    } else {
+      config.headers["Content-Type"] = "application/json";
+    }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     } else {
@@ -84,11 +89,27 @@ api.interceptors.response.use(
       try {
         console.log("start get refresh");
         // token refresh
-        const refreshResponse = await authApi.post("/refresh");
-        console.log("refreshResponse ", refreshResponse);
-        const newToken = refreshResponse?.data?.user?.accessToken;
+        // const refreshResponse = await authApi.post("/refresh");
+        // console.log("refreshResponse ", refreshResponse);
+        // const newToken = refreshResponse?.data?.user?.accessToken;
 
-        setAccessToken(newToken);
+        // setAccessToken(newToken);
+        const user = JSON.parse(localStorage.getItem("user"));
+        const oldAccessToken = user?.accessToken;
+        const oldRefreshToken = user?.refreshToken;
+
+        const refreshResponse = await axios.post(BASE_URL_AUTH + "/refresh", {
+          AccessToken: oldAccessToken,
+          RefreshToken: oldRefreshToken,
+        });
+
+        //console.log("refreshResponse ", refreshResponse);
+        const newToken = refreshResponse?.data?.user?.accessToken;
+        const newRefesh = refreshResponse?.data?.user?.refreshToken;
+        localStorage.setItem(
+          "user",
+          JSON.stringify(refreshResponse?.data?.user)
+        );
         processQueue(null, newToken);
 
         // Retry original request

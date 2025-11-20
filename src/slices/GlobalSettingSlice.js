@@ -3,25 +3,25 @@ import api from "../api/axios";
 const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
-const getAuthHeaders = (isForm) => {
-  let accessToken = localStorage.getItem("token");
-  if (isForm) {
-    return {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "multipart/form-data",
-        "Accept-Language": "en",
-      },
-    };
-  }
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-      "Accept-Language": "en",
-    },
-  };
-};
+// const getAuthHeaders = (isForm) => {
+//   let accessToken = localStorage.getItem("token");
+//   if (isForm) {
+//     return {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//         "Content-Type": "multipart/form-data",
+//         "Accept-Language": "en",
+//       },
+//     };
+//   }
+//   return {
+//     headers: {
+//       Authorization: `Bearer ${accessToken}`,
+//       "Content-Type": "application/json",
+//       "Accept-Language": "en",
+//     },
+//   };
+// };
 
 //Get_Currencies
 export const Get_Currencies = createAsyncThunk(
@@ -29,9 +29,9 @@ export const Get_Currencies = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/Get_Currencies`,
-        {},
-        getAuthHeaders(false)
+        `/Get_Currencies`
+        // {},
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
@@ -45,9 +45,9 @@ export const Get_Languages = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/Get_Languages`,
-        {},
-        getAuthHeaders(false)
+        `/Get_Languages`
+        // {},
+        // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
