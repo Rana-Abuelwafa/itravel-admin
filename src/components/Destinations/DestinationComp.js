@@ -6,7 +6,7 @@ import {
   SaveDestinationTranslations,
   GetDestination_Mains,
 } from "../../slices/destinationSlice";
-import { Form, Row, Col, Button, FormCheck } from "react-bootstrap";
+import { Form, Row, Col, Button, FormCheck, Pagination } from "react-bootstrap";
 import { Countries } from "../../helper/Countries";
 import {
   FaPlus,
@@ -24,11 +24,15 @@ import { Table } from "react-bootstrap";
 import TranslationModal from "./TranslationModal";
 import { FiRefreshCcw } from "react-icons/fi";
 import { FaX } from "react-icons/fa6";
+
 function DestinationComp() {
   const dispatch = useDispatch();
   const { destinations, loading, error, DestinationMain } = useSelector(
     (state) => state.destinations
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
   const [touched, setTouched] = useState(false);
   const [filterExpanded, setFilterExpanded] = useState(false);
   const [showTranslationModal, setShowTranslationModal] = useState(false);
@@ -65,10 +69,37 @@ function DestinationComp() {
   };
   // Fetch services and packages on component mount
   useEffect(() => {
-    let data = { country_code: "", lang_code: "en", currency_code: "" };
+    let data = {
+      country_code: "",
+      lang_code: "en",
+      currency_code: "",
+      pageNumber: currentPage,
+      pageSize: itemsPerPage,
+    };
     dispatch(GetDestinations(data));
     dispatch(GetDestination_Mains(false));
   }, [dispatch]);
+
+  useEffect(() => {
+    const totalPages = Math.ceil(destinations?.totalPages / itemsPerPage);
+    setTotalPages(totalPages);
+    return () => {};
+  }, [destinations]);
+
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      // let req = { pageNumber: page, pageSize: itemsPerPage };
+      let data = {
+        country_code: "",
+        lang_code: "en",
+        currency_code: "",
+        pageNumber: page,
+        pageSize: itemsPerPage,
+      };
+      dispatch(GetDestinations(data));
+    }
+  };
   const onSubmit = (e) => {
     e.preventDefault();
     setTouched(true);
@@ -88,7 +119,13 @@ function DestinationComp() {
             leaf: false,
             order: 1,
           });
-          let data = { country_code: "", lang_code: "en", currency_code: "" };
+          let data = {
+            country_code: "",
+            lang_code: "en",
+            currency_code: "",
+            pageNumber: currentPage,
+            pageSize: itemsPerPage,
+          };
           dispatch(GetDestinations(data));
         } else {
           setShowPopup(true);
@@ -157,7 +194,13 @@ function DestinationComp() {
           leaf: false,
           order: 1,
         });
-        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        let data = {
+          country_code: "",
+          lang_code: "en",
+          currency_code: "",
+          pageNumber: currentPage,
+          pageSize: itemsPerPage,
+        };
         dispatch(GetDestinations(data));
       } else {
         setShowPopup(true);
@@ -192,7 +235,13 @@ function DestinationComp() {
     };
     dispatch(SaveDestinationTranslations(row)).then((result) => {
       if (result.payload && result.payload.success) {
-        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        let data = {
+          country_code: "",
+          lang_code: "en",
+          currency_code: "",
+          pageNumber: currentPage,
+          pageSize: itemsPerPage,
+        };
         dispatch(GetDestinations(data));
       } else {
         setShowPopup(true);
@@ -521,7 +570,7 @@ function DestinationComp() {
           </thead>
           <tbody>
             {destinations &&
-              destinations.map((dest, index) => (
+              destinations?.result?.map((dest, index) => (
                 <React.Fragment key={dest.destination_id}>
                   <tr
                     className={
@@ -597,6 +646,26 @@ function DestinationComp() {
               ))}
           </tbody>
         </Table>
+        {/* Pagination */}
+        <Pagination className="mt-3 justify-content-center">
+          <Pagination.Prev
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Pagination.Item
+              key={i}
+              active={i + 1 === currentPage}
+              onClick={() => handlePageChange(i + 1)}
+            >
+              {i + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          />
+        </Pagination>
       </div>
       {loading ? <LoadingPage /> : null}
       <PopUp

@@ -23,6 +23,24 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 //   };
 // };
 
+//Get main trips list with pagination
+export const GetTrip_MainsWithPag = createAsyncThunk(
+  "trips/GetTrip_MainsWithPag",
+  async (data, thunkAPI) => {
+    try {
+      const response = await api.post(
+        `/GetTrip_MainsWithPag?`,
+        data
+        // getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      // return rejectWithValue(error.response.data);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
 //Get main trips list
 export const GetTrip_Mains = createAsyncThunk(
   "trips/GetTrip_Mains",
@@ -405,6 +423,7 @@ const tripSlice = createSlice({
     TripCategories: [],
     TransferCategories: [],
     ChildPolicyList: [],
+    TripsMainPag: [],
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -413,9 +432,28 @@ const tripSlice = createSlice({
         state.loading = false;
         state.TripsMain = action.payload;
       })
+      .addCase(GetTrip_Mains.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTrip_Mains.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(SaveMainTrip.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
+      });
+    builder
+      .addCase(GetTrip_MainsWithPag.fulfilled, (state, action) => {
+        state.loading = false;
+        state.TripsMainPag = action.payload;
+      })
+      .addCase(GetTrip_MainsWithPag.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(GetTrip_MainsWithPag.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       })
       .addCase(GetTripTranslationGrp.fulfilled, (state, action) => {
         state.loading = false;
@@ -582,6 +620,7 @@ const tripSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       });
+
     // .addMatcher(
     //   (action) => action.type.endsWith("/pending"),
     //   (state) => {

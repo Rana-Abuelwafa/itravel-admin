@@ -5,6 +5,7 @@ import {
   SaveMainTrip,
   GetTripCategories,
   GetTransfer_Categories,
+  GetTrip_MainsWithPag,
 } from "../../slices/tripSlice";
 import { GetDestination_Mains } from "../../slices/destinationSlice";
 import {
@@ -15,6 +16,7 @@ import {
   FormCheck,
   Table,
   InputGroup,
+  Pagination,
 } from "react-bootstrap";
 import {
   FaPlus,
@@ -43,6 +45,9 @@ import { useNavigate } from "react-router-dom";
 function TripComp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
   const [searchTerm, setSearchTerm] = useState(""); // State for search functionality
   const [SearchCategory, setSearchCategory] = useState("");
   const [destination_id, setDestinationId] = useState(0);
@@ -76,18 +81,50 @@ function TripComp() {
   const slugRegex = /^(?!-)(?!.*--)[a-zA-Z0-9-]+(?<!-)$/;
   const isValidSlug =
     formData.route?.length === 0 || slugRegex.test(formData.route);
-  const { TripsMain, loading, error, TripCategories, TransferCategories } =
-    useSelector((state) => state.trips);
+  const {
+    TripsMain,
+    TripsMainPag,
+    loading,
+    error,
+    TripCategories,
+    TransferCategories,
+  } = useSelector((state) => state.trips);
   const { DestinationMain } = useSelector((state) => state.destinations);
 
   useEffect(() => {
     dispatch(GetTripCategories());
     dispatch(GetDestination_Mains(true));
-    let data = { destination_id: destination_id, trip_type: 0 };
-    dispatch(GetTrip_Mains(data));
+    let data = {
+      destination_id: destination_id,
+      trip_type: 0,
+      pageNumber: currentPage,
+      pageSize: itemsPerPage,
+    };
+    // dispatch(GetTrip_Mains(data));
+    // let PagReq = { destination_id: destination_id, trip_type: 0 };
+    dispatch(GetTrip_MainsWithPag(data));
     return () => {};
   }, [dispatch]);
+  useEffect(() => {
+    const totalPages = Math.ceil(TripsMainPag?.totalPages / itemsPerPage);
+    setTotalPages(totalPages);
+    return () => {};
+  }, [TripsMainPag]);
 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      // let req = { pageNumber: page, pageSize: itemsPerPage };
+      let data = {
+        country_code: "",
+        lang_code: "en",
+        currency_code: "",
+        pageNumber: page,
+        pageSize: itemsPerPage,
+      };
+      dispatch(GetTrip_MainsWithPag(data));
+    }
+  };
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -141,8 +178,13 @@ function TripComp() {
             trip_code_auto: "",
           });
           setIsUpdate(false);
-          let data = { destination_id: 0, trip_type: 0 };
-          dispatch(GetTrip_Mains(data));
+          let data = {
+            destination_id: 0,
+            trip_type: 0,
+            pageNumber: currentPage,
+            pageSize: itemsPerPage,
+          };
+          dispatch(GetTrip_MainsWithPag(data));
         } else {
           setShowPopup(true);
           setPopupMessage(result.payload.errors);
@@ -194,8 +236,13 @@ function TripComp() {
     dispatch(SaveMainTrip(data)).then((result) => {
       if (result.payload && result.payload.success) {
         setShowPopup(false);
-        let data = { destination_id: 0, trip_type: 0 };
-        dispatch(GetTrip_Mains(data));
+        let data = {
+          destination_id: 0,
+          trip_type: 0,
+          pageNumber: currentPage,
+          pageSize: itemsPerPage,
+        };
+        dispatch(GetTrip_MainsWithPag(data));
       } else {
         setShowPopup(true);
         setPopupMessage(result.payload.errors);
@@ -537,64 +584,67 @@ function TripComp() {
       <hr />
       <div className="result_list">
         {" "}
-        {TripsMain && TripsMain.length > 0 ? (
-          <Table responsive>
-            <thead>
-              <tr className="main_row">
-                <th>code</th>
-                <th>default name</th>
-                <th>duration</th>
-                <th>pickup</th>
-                <th>in top</th>
-                <th>in slider</th>
-                <th>Soon</th>
-                <th>destination</th>
-                <th>route</th>
-                <th>
-                  Category
-                  {/* <InputGroup className="filterInput"> */}
-                  {/* <Form.Label>Destination</Form.Label> */}
-                  <Form.Control
-                    as="select"
-                    name="trip_type"
-                    onChange={(e) => setSearchCategory(e.target.value)}
-                    value={SearchCategory}
-                    required
-                    className="filterInput"
-                  >
-                    <option value="">filter...</option>
-                    {TripCategories &&
-                      TripCategories?.map((cat, index) => (
-                        <option key={index} value={cat.id}>
-                          {cat.type_name}
-                        </option>
-                      ))}
-                  </Form.Control>
-                  {/* <Button onClick={()=> setSearchCategory()}>
+        {TripsMainPag && TripsMainPag?.trips?.length > 0 ? (
+          <>
+            <Table responsive>
+              <thead>
+                <tr className="main_row">
+                  <th>code</th>
+                  <th>default name</th>
+                  <th>duration</th>
+                  <th>pickup</th>
+                  <th>in top</th>
+                  <th>in slider</th>
+                  <th>Soon</th>
+                  <th>destination</th>
+                  <th>route</th>
+                  <th>
+                    Category
+                    {/* <InputGroup className="filterInput"> */}
+                    {/* <Form.Label>Destination</Form.Label> */}
+                    <Form.Control
+                      as="select"
+                      name="trip_type"
+                      onChange={(e) => setSearchCategory(e.target.value)}
+                      value={SearchCategory}
+                      required
+                      className="filterInput"
+                    >
+                      <option value="">filter...</option>
+                      {TripCategories &&
+                        TripCategories?.map((cat, index) => (
+                          <option key={index} value={cat.id}>
+                            {cat.type_name}
+                          </option>
+                        ))}
+                    </Form.Control>
+                    {/* <Button onClick={()=> setSearchCategory()}>
                     <FaSearch />
                   </Button> */}
-                  {/* </InputGroup> */}
-                </th>
-                <th>Release Days</th>
-                <th>Order</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {TripsMain.filter(
-                (item) =>
-                  item.trip_default_name
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase()) &&
-                  item.trip_type
-                    ?.toString()
-                    .includes(SearchCategory?.toString())
-              ).map((trip, index) => (
-                <tr
-                  key={index}
-                  className={trip.active ? "active-row" : "inactive-row"}
-                >
-                  {/* <td>
+                    {/* </InputGroup> */}
+                  </th>
+                  <th>Release Days</th>
+                  <th>Order</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {TripsMainPag?.trips
+                  ?.filter(
+                    (item) =>
+                      item.trip_default_name
+                        .toLowerCase()
+                        .includes(searchTerm.toLowerCase()) &&
+                      item.trip_type
+                        ?.toString()
+                        .includes(SearchCategory?.toString())
+                  )
+                  .map((trip, index) => (
+                    <tr
+                      key={index}
+                      className={trip.active ? "active-row" : "inactive-row"}
+                    >
+                      {/* <td>
                     {" "}
                     <Form.Group className="mb-3" controlId="packageName">
                       <FormCheck
@@ -610,42 +660,43 @@ function TripComp() {
                       />
                     </Form.Group>
                   </td> */}
-                  <td>{trip.trip_code}</td>
-                  <td>{trip.trip_default_name}</td>
-                  <td>{trip.trip_duration}</td>
-                  <td>{trip.pickup}</td>
-                  <td>
-                    {trip.show_in_top ? (
-                      <FaCheck className="check_icon" />
-                    ) : (
-                      <FaTimes className="x_icon" />
-                    )}
-                  </td>
-                  <td>
-                    {trip.show_in_slider ? (
-                      <FaCheck className="check_icon" />
-                    ) : (
-                      <FaX className="x_icon" />
-                    )}
-                  </td>
-                  <td>
-                    {trip.is_comm_soon ? (
-                      <FaCheck className="check_icon" />
-                    ) : (
-                      <FaX className="x_icon" />
-                    )}
-                  </td>
-                  <td>{trip.dest_default_name}</td>
-                  <td>{trip.route}</td>
-                  <td>
-                    {
-                      TripCategories.filter((f) => f.id == trip.trip_type)[0]
-                        ?.type_name
-                    }
-                  </td>
-                  <td>{trip.release_days}</td>
-                  <td>{trip.trip_order}</td>
-                  {/* {trip.trip_type == 2 ? (
+                      <td>{trip.trip_code}</td>
+                      <td>{trip.trip_default_name}</td>
+                      <td>{trip.trip_duration}</td>
+                      <td>{trip.pickup}</td>
+                      <td>
+                        {trip.show_in_top ? (
+                          <FaCheck className="check_icon" />
+                        ) : (
+                          <FaTimes className="x_icon" />
+                        )}
+                      </td>
+                      <td>
+                        {trip.show_in_slider ? (
+                          <FaCheck className="check_icon" />
+                        ) : (
+                          <FaX className="x_icon" />
+                        )}
+                      </td>
+                      <td>
+                        {trip.is_comm_soon ? (
+                          <FaCheck className="check_icon" />
+                        ) : (
+                          <FaX className="x_icon" />
+                        )}
+                      </td>
+                      <td>{trip.dest_default_name}</td>
+                      <td>{trip.route}</td>
+                      <td>
+                        {
+                          TripCategories.filter(
+                            (f) => f.id == trip.trip_type
+                          )[0]?.type_name
+                        }
+                      </td>
+                      <td>{trip.release_days}</td>
+                      <td>{trip.trip_order}</td>
+                      {/* {trip.trip_type == 2 ? (
                     <td>
                       {
                         TransferCategories.filter(
@@ -654,36 +705,36 @@ function TripComp() {
                       }
                     </td>
                   ) : null} */}
-                  <td>
-                    {" "}
-                    {trip.active && (
-                      <button
-                        className="btn btn-sm action_btn yellow-btn"
-                        onClick={() => handleEdit(trip)}
-                        title="Edit"
-                      >
-                        <FaEdit />
-                      </button>
-                    )}
-                    {trip.active ? (
-                      <button
-                        className="btn btn-sm red-btn action_btn"
-                        onClick={() => handleDelete(trip, true)}
-                        title="Disactive"
-                      >
-                        {/* <FaTrash /> */}
-                        <FaEyeSlash />
-                      </button>
-                    ) : (
-                      <button
-                        className="btn btn-sm red-btn action_btn"
-                        onClick={() => handleDelete(trip, false)}
-                        title="active"
-                      >
-                        <FaUndo />
-                      </button>
-                    )}
-                    {/* <button
+                      <td>
+                        {" "}
+                        {trip.active && (
+                          <button
+                            className="btn btn-sm action_btn yellow-btn"
+                            onClick={() => handleEdit(trip)}
+                            title="Edit"
+                          >
+                            <FaEdit />
+                          </button>
+                        )}
+                        {trip.active ? (
+                          <button
+                            className="btn btn-sm red-btn action_btn"
+                            onClick={() => handleDelete(trip, true)}
+                            title="Disactive"
+                          >
+                            {/* <FaTrash /> */}
+                            <FaEyeSlash />
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn-sm red-btn action_btn"
+                            onClick={() => handleDelete(trip, false)}
+                            title="active"
+                          >
+                            <FaUndo />
+                          </button>
+                        )}
+                        {/* <button
                       className="btn btn-sm  ms-2 purble-btn action_btn"
                       // onClick={() => handleAddImage(dest)}
                       title="Add Image"
@@ -697,11 +748,32 @@ function TripComp() {
                     >
                       <FaDollarSign />
                     </button> */}
-                  </td>
-                </tr>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </Table>
+            {/* Pagination */}
+            <Pagination className="mt-3 justify-content-center">
+              <Pagination.Prev
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              />
+              {Array.from({ length: totalPages }, (_, i) => (
+                <Pagination.Item
+                  key={i}
+                  active={i + 1 === currentPage}
+                  onClick={() => handlePageChange(i + 1)}
+                >
+                  {i + 1}
+                </Pagination.Item>
               ))}
-            </tbody>
-          </Table>
+              <Pagination.Next
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              />
+            </Pagination>
+          </>
         ) : (
           <div className="centerSection">
             <p>No data</p>
