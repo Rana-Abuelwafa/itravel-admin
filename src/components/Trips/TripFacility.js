@@ -29,7 +29,7 @@ function TripFacility() {
     dispatch(GetFacilityAllWithSelect(trip?.id));
   };
   const handleFacilityChange = (e, facility) => {
-    console.log(e.target.checked);
+    //console.log(e.target.checked);
     let checked = e.target.checked;
     let data = {
       id: facility.fac_trip_id,

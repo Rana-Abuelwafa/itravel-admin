@@ -14,6 +14,7 @@ const TranslationModal = ({
   setPopupMessage,
   setPopupType,
   setShowPopup,
+  resetPagination,
 }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.destinations); // Get translation status from Redux store
@@ -23,8 +24,15 @@ const TranslationModal = ({
     dispatch(SaveDestinationTranslations(currentTranslation)).then((result) => {
       if (result.payload && result.payload.success) {
         setShow(false);
-        let data = { country_code: "", lang_code: "en", currency_code: "" };
+        let data = {
+          country_code: "",
+          lang_code: "en",
+          currency_code: "",
+          pageNumber: 1,
+          pageSize: 5,
+        };
         dispatch(GetDestinations(data));
+        resetPagination();
       } else {
         setShowPopup(true);
         setPopupType("error");

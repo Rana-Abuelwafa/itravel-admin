@@ -222,3 +222,37 @@
   border-radius: 5px !important;
   padding: 0 5px !important;
 }
+
+//copy modal style
+.custom-modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+
+  .modal-title {
+    font-weight: 600;
+  }
+}
+
+.custom-modal-body {
+  padding: 24px;
+
+  label {
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+
+  input {
+    border-radius: 8px;
+    padding: 10px;
+  }
+}
+
+.custom-modal-footer {
+  border-top: 1px solid #eee;
+  padding: 16px;
+
+  button {
+    min-width: 90px;
+    border-radius: 8px;
+  }
+}

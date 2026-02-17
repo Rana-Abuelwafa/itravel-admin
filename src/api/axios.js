@@ -57,7 +57,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    console.log("originalRequest.url ", originalRequest.url);
+    //console.log("originalRequest.url ", originalRequest.url);
     // Skip refresh for login/register endpoints
     if (
       originalRequest.url.includes("/api/LoginUser") ||
@@ -68,7 +68,7 @@ api.interceptors.response.use(
     ) {
       return Promise.reject(error);
     }
-    console.log("error.response?.status", error.response?.status);
+    //console.log("error.response?.status", error.response?.status);
     // Handle unauthorized
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
@@ -87,7 +87,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log("start get refresh");
+        //console.log("start get refresh");
         // token refresh
         // const refreshResponse = await authApi.post("/refresh");
         // console.log("refreshResponse ", refreshResponse);

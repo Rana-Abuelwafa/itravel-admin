@@ -28,7 +28,7 @@ import { FaX } from "react-icons/fa6";
 function DestinationComp() {
   const dispatch = useDispatch();
   const { destinations, loading, error, DestinationMain } = useSelector(
-    (state) => state.destinations
+    (state) => state.destinations,
   );
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -257,7 +257,7 @@ function DestinationComp() {
     setExpandedRows(
       isRowExpanded
         ? currentExpandedRows.filter((rowId) => rowId !== id)
-        : [...currentExpandedRows, id]
+        : [...currentExpandedRows, id],
     );
   };
 
@@ -638,7 +638,7 @@ function DestinationComp() {
                       <>
                         {renderTranslationHeader()}
                         {dest.translations?.map((translation) =>
-                          renderTranslationRow(translation)
+                          renderTranslationRow(translation),
                         )}
                       </>
                     )}
@@ -668,13 +668,13 @@ function DestinationComp() {
         </Pagination>
       </div>
       {loading ? <LoadingPage /> : null}
-      <PopUp
+      {/* <PopUp
         show={showPopup}
         closeAlert={() => setShowPopup(false)}
         msg={popupMessage}
         type={popupType}
         autoClose={3000}
-      />
+      /> */}
       {/* Translation Modal */}
       <TranslationModal
         show={showTranslationModal}
@@ -684,6 +684,7 @@ function DestinationComp() {
         setPopupMessage={setPopupMessage}
         setPopupType={setPopupType}
         setShowPopup={setShowPopup}
+        resetPagination={() => setCurrentPage(1)}
       />
     </section>
   );

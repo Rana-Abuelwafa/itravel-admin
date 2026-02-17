@@ -62,7 +62,7 @@ function DestinationImages() {
     // });
     files.forEach((file) => {
       const newFileName = RenameFileFn(file);
-      console.log("newFileName ", newFileName);
+     // console.log("newFileName ", newFileName);
       const renamedFile = new File([file], newFileName, { type: file.type });
       formData.append("imgs", renamedFile); // "Files" matches API param name
     });

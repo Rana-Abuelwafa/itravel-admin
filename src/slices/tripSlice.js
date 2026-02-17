@@ -409,6 +409,24 @@ export const GetTransfer_Categories = createAsyncThunk(
     }
   }
 );
+
+//copy trip api
+//get transfer categories list
+export const CopyTrip = createAsyncThunk(
+  "trips/CopyTrip",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const response = await api.post(
+        `/CopyTrip`,
+        formData
+        //getAuthHeaders(false)
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 const tripSlice = createSlice({
   name: "trips",
   initialState: {

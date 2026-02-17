@@ -41,7 +41,8 @@ import { FiRefreshCcw } from "react-icons/fi";
 import "./trips.scss";
 import { FiDelete } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
+import { FiCopy } from "react-icons/fi";
+import CopyModal from "./CopyModal";
 function TripComp() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -57,6 +58,7 @@ function TripComp() {
   const [filterExpanded, setFilterExpanded] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [activeTrip, setActiveTrip] = useState({});
+  const [showCopyModal, setShowCopyModal] = useState(false);
   const [isChecked, setIsChecked] = useState({});
   const [dirty, setDirty] = useState(false);
   const [touched, setTouched] = useState(false);
@@ -91,9 +93,7 @@ function TripComp() {
   } = useSelector((state) => state.trips);
   const { DestinationMain } = useSelector((state) => state.destinations);
 
-  useEffect(() => {
-    dispatch(GetTripCategories());
-    dispatch(GetDestination_Mains(true));
+  const getTrips = () => {
     let data = {
       destination_id: destination_id,
       trip_type: 0,
@@ -103,6 +103,11 @@ function TripComp() {
     // dispatch(GetTrip_Mains(data));
     // let PagReq = { destination_id: destination_id, trip_type: 0 };
     dispatch(GetTrip_MainsWithPag(data));
+  };
+  useEffect(() => {
+    dispatch(GetTripCategories());
+    dispatch(GetDestination_Mains(true));
+    getTrips();
     return () => {};
   }, [dispatch]);
   useEffect(() => {
@@ -734,6 +739,18 @@ function TripComp() {
                             <FaUndo />
                           </button>
                         )}
+                        {trip.active && (
+                          <button
+                            className="btn btn-sm action_btn darkBlue-Btn"
+                            onClick={() => {
+                              setActiveTrip(trip);
+                              setShowCopyModal(true);
+                            }}
+                            title="Copy"
+                          >
+                            <FiCopy />
+                          </button>
+                        )}
                         {/* <button
                       className="btn btn-sm  ms-2 purble-btn action_btn"
                       // onClick={() => handleAddImage(dest)}
@@ -781,6 +798,17 @@ function TripComp() {
         )}
       </div>
       {loading ? <LoadingPage /> : null}
+      {showCopyModal == true && activeTrip != null ? (
+        <CopyModal
+          show={showCopyModal}
+          TripId={activeTrip?.id}
+          handleClose={() => {
+            setShowCopyModal(false);
+            getTrips();
+          }}
+        />
+      ) : null}
+
       <PopUp
         show={showPopup}
         closeAlert={() => setShowPopup(false)}
