@@ -29,8 +29,8 @@ export const GetTrip_MainsWithPag = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await api.post(
-        `/GetTrip_MainsWithPag?`,
-        data
+        `/TravelAdmin/GetTrip_MainsWithPag?`,
+        data,
         // getAuthHeaders(false)
       );
       return response.data;
@@ -38,7 +38,7 @@ export const GetTrip_MainsWithPag = createAsyncThunk(
       // return rejectWithValue(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Get main trips list
@@ -55,10 +55,10 @@ export const GetTrip_Mains = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetTrip_Mains?destination_id=` +
+        `/TravelAdmin/GetTrip_Mains?destination_id=` +
           data.destination_id +
           "&&trip_type=" +
-          data.trip_type
+          data.trip_type,
         // {},
         // getAuthHeaders(false)
       );
@@ -67,7 +67,7 @@ export const GetTrip_Mains = createAsyncThunk(
       // return rejectWithValue(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Get  trip categories list
@@ -81,7 +81,7 @@ export const GetTripCategories = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetTripCategories`
+        `/TravelAdmin/GetTripCategories`,
         // {},
         // getAuthHeaders(false)
       );
@@ -89,7 +89,7 @@ export const GetTripCategories = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //save trip main
 export const SaveMainTrip = createAsyncThunk(
@@ -102,15 +102,15 @@ export const SaveMainTrip = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveMainTrip`,
-        formData
+        `/TravelAdmin/SaveMainTrip`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Get trips transaltions list grouping by lang
@@ -124,7 +124,7 @@ export const GetTripTranslationGrp = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetTripTranslationGrp?trip_id=` + trip_id
+        `/TravelAdmin/GetTripTranslationGrp?trip_id=` + trip_id,
         // {},
         // getAuthHeaders(false)
       );
@@ -132,7 +132,7 @@ export const GetTripTranslationGrp = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //Get trips prices list grouping by lang
 export const GetTrip_Prices = createAsyncThunk(
@@ -145,7 +145,7 @@ export const GetTrip_Prices = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetTrip_Prices?trip_id=` + trip_id
+        `/TravelAdmin/GetTrip_Prices?trip_id=` + trip_id,
         // {},
         // getAuthHeaders(false)
       );
@@ -154,7 +154,7 @@ export const GetTrip_Prices = createAsyncThunk(
       // return rejectWithValue(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //get child policy for trip
@@ -163,7 +163,7 @@ export const GetTrip_ChildPolicy = createAsyncThunk(
   async (trip_id, thunkAPI) => {
     try {
       const response = await api.post(
-        `/GetTrip_ChildPolicy?trip_id=` + trip_id
+        `/TravelAdmin/GetTrip_ChildPolicy?trip_id=` + trip_id,
         // {},
         // getAuthHeaders(false)
       );
@@ -172,7 +172,7 @@ export const GetTrip_ChildPolicy = createAsyncThunk(
       // return rejectWithValue(error.response.data);
       return thunkAPI.rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //save trip translations
 export const SaveTripTranslation = createAsyncThunk(
@@ -185,15 +185,15 @@ export const SaveTripTranslation = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveTripTranslation`,
-        formData
+        `/TravelAdmin/SaveTripTranslation`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save trip price
@@ -207,15 +207,15 @@ export const SaveTripPrices = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveTripPrices`,
-        formData
+        `/TravelAdmin/SaveTripPrices`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save trip child policy
@@ -224,15 +224,15 @@ export const SaveTripChildPolicy = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/SaveTripChildPolicy`,
-        formData
+        `/TravelAdmin/SaveTripChildPolicy`,
+        formData,
         // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save main trip pickups
@@ -246,15 +246,15 @@ export const SaveMainTripPickups = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveMainTripPickups`,
-        formData
+        `/TravelAdmin/SaveMainTripPickups`,
+        formData,
         // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save  trip pickups translations
@@ -268,15 +268,15 @@ export const SaveTripPickupsTranslations = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveTripPickupsTranslations`,
-        formData
+        `/TravelAdmin/SaveTripPickupsTranslations`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //Get pickups with transaltions list
 export const GetPickupsAllForTrip = createAsyncThunk(
@@ -289,15 +289,15 @@ export const GetPickupsAllForTrip = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetPickupsAllForTrip`,
-        formData
+        `/TravelAdmin/GetPickupsAllForTrip`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Get images for specific trips
@@ -311,7 +311,7 @@ export const GetImgsByTrip = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetImgsByTrip?trip_id=` + trip_id
+        `/TravelAdmin/GetImgsByTrip?trip_id=` + trip_id,
         // {},
         // getAuthHeaders(false)
       );
@@ -319,7 +319,7 @@ export const GetImgsByTrip = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save images for trip
@@ -333,16 +333,16 @@ export const SaveTripImage = createAsyncThunk(
       //   getAuthHeaders(true)
       // );
       const response = await api.post(
-        `/SaveTripImage`,
+        `/TravelAdmin/SaveTripImage`,
         formData,
-        { isFormData: true }
+        { isFormData: true },
         // getAuthHeaders(true)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //update trip image
@@ -356,15 +356,15 @@ export const UpdateTripImage = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/UpdateTripImage`,
-        formData
+        `/TravelAdmin/UpdateTripImage`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //save transfer Category
 export const SaveTransferCategory = createAsyncThunk(
@@ -377,15 +377,15 @@ export const SaveTransferCategory = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveTransferCategory`,
-        formData
+        `/TravelAdmin/SaveTransferCategory`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //get transfer categories list
@@ -399,15 +399,15 @@ export const GetTransfer_Categories = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetTransfer_Categories`,
-        formData
+        `/TravelAdmin/GetTransfer_Categories`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //copy trip api
@@ -417,15 +417,15 @@ export const CopyTrip = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/CopyTrip`,
-        formData
+        `/TravelAdmin/CopyTrip`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 const tripSlice = createSlice({
   name: "trips",

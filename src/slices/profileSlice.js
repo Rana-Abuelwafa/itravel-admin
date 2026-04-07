@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import axios from "axios";
 import api from "../api/axios";
 // Base API URL from environment variables
-const BASE_URL = process.env.REACT_APP_CLIENT_API_URL;
+const BASE_URL = "/Booking";
 
 // const getAuthHeaders = () => {
 //   const user = JSON.parse(localStorage.getItem("user"));

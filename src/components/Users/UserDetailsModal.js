@@ -11,7 +11,7 @@ import { FaIdCard } from "react-icons/fa";
 function UserDetailsModal({ show, onHide, client_id }) {
   const dispatch = useDispatch();
   const { profileData, profileImage, loading } = useSelector(
-    (state) => state.profile
+    (state) => state.profile,
   );
   useEffect(() => {
     dispatch(GetClientProfileByAdmin(client_id)).unwrap();
@@ -39,24 +39,25 @@ function UserDetailsModal({ show, onHide, client_id }) {
               <h2>{profileData?.client_name}</h2>
               <p>
                 {/* <FiMail className="icon"/> */}
-                <strong>Email:</strong> {profileData?.client_email}
+                <strong>Email:</strong> {profileData?.client_email || "No data"}
               </p>
               <p>
                 {" "}
                 {/* <FaIdCard className="icon"/> */}
-                <strong>Address:</strong> {profileData?.address}
+                <strong>Address:</strong> {profileData?.address || "No data"}
               </p>
               <p>
                 {/* <FiPhone className="icon"/> */}
-                <strong>Phone:</strong> {profileData?.phone_number}
+                <strong>Phone:</strong> {profileData?.phone_number || "No data"}
               </p>
               <p>
                 {/* <FiUser className="icon"/> */}
-                <strong>gender:</strong> {profileData?.gender}
+                <strong>gender:</strong> {profileData?.gender || "No data"}
               </p>
               <p>
                 {/* <FiGift /> */}
-                <strong>BirthDay:</strong> {profileData?.client_birthdayStr}
+                <strong>BirthDay:</strong>{" "}
+                {profileData?.client_birthdayStr || "No data"}
               </p>
             </div>
           </div>

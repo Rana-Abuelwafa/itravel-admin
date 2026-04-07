@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../api/axios";
-const BASE_URL = process.env.REACT_APP_API_URL;
+// const BASE_URL = process.env.REACT_APP_API_URL;
 
 // Helper function to get authentication headers
 // const getAuthHeaders = (isForm) => {
@@ -29,7 +29,7 @@ export const Get_Currencies = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/Get_Currencies`
+        `/TravelAdmin/Get_Currencies`
         // {},
         // getAuthHeaders(false)
       );
@@ -45,7 +45,7 @@ export const Get_Languages = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await api.post(
-        `/Get_Languages`
+        `/TravelAdmin/Get_Languages`
         // {},
         // getAuthHeaders(false)
       );

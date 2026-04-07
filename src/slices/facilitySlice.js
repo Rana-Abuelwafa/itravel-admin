@@ -34,7 +34,7 @@ export const GetFacilityWithTranslation = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetFacilityWithTranslation`
+        `/TravelAdmin/GetFacilityWithTranslation`,
         // {},
         // getAuthHeaders(false)
       );
@@ -42,7 +42,7 @@ export const GetFacilityWithTranslation = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 //save  facility translations
 export const SaveFacilityTranslation = createAsyncThunk(
@@ -55,15 +55,15 @@ export const SaveFacilityTranslation = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveFacilityTranslation`,
-        formData
+        `/TravelAdmin/SaveFacilityTranslation`,
+        formData,
         // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //save  facility main
@@ -77,15 +77,15 @@ export const SaveMainFacility = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/SaveMainFacility`,
-        formData
+        `/TravelAdmin/SaveMainFacility`,
+        formData,
         // getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Get Facility with translation
@@ -99,7 +99,7 @@ export const GetFacilityAllWithSelect = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/GetFacilityAllWithSelect?trip_id=` + trip_id
+        `/TravelAdmin/GetFacilityAllWithSelect?trip_id=` + trip_id,
         // {},
         // getAuthHeaders(false)
       );
@@ -107,7 +107,7 @@ export const GetFacilityAllWithSelect = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 //Assign Facility To Trip
@@ -121,15 +121,15 @@ export const AssignFacilityToTrip = createAsyncThunk(
       //   getAuthHeaders(false)
       // );
       const response = await api.post(
-        `/AssignFacilityToTrip`,
-        formData
+        `/TravelAdmin/AssignFacilityToTrip`,
+        formData,
         //getAuthHeaders(false)
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 const facilitySlice = createSlice({
   name: "facility",
